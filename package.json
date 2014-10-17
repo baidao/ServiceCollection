@@ -1,0 +1,20 @@
+{
+  "name": "ServiceCollection",
+  "private": true,
+  "version": "0.0.1",
+  "description": "Service protocal for kinds of service.",
+  "dependencies": {
+    "bunyan": "^1.0.1",
+    "generic-pool": "^2.1.1",
+    "mkdirp": "^0.5.0",
+    "thrift": "^0.9.1"
+  },
+  "scripts": {
+    "install": "coffee -c ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@gitlab.baidao.com:mobilerd/ytxcrmservice.git"
+  },
+  "author": "Tomas.Huang"
+}

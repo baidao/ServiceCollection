@@ -1,0 +1,1 @@
+module.exports = require("./config/config.#{process.env.agent}")[process.env.NODE_ENV ? "integration"]
