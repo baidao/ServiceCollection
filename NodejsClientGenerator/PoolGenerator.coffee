@@ -7,7 +7,7 @@ exports.createCRMClientPool = (serviceName, service, config)->
   pool = poolModule.Pool
     name: serviceName
     create: (callback) ->
-      connection = thrift.createConnection config.domain, config.port
+      connection = thrift.createConnection config.domain, config.port, {transport:thrift[config.transport]}
 
       client = thrift.createClient service, connection
       client.dirty_connection = connection

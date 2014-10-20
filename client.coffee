@@ -1,3 +1,6 @@
+process.env.NODE_ENV ?= "development" 
+process.env.agent ?= "yg"
+
 clientGenerator = require("./NodejsClientGenerator/ClientGenerator")
 client = clientGenerator.client("MessageService")
 

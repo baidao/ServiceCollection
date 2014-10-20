@@ -14,7 +14,9 @@ exports.createCRMClientPool = function(serviceName, service, config) {
     name: serviceName,
     create: function(callback) {
       var client, connection;
-      connection = thrift.createConnection(config.domain, config.port);
+      connection = thrift.createConnection(config.domain, config.port, {
+        transport: thrift[config.transport]
+      });
       client = thrift.createClient(service, connection);
       client.dirty_connection = connection;
       connection.once('connect', function() {

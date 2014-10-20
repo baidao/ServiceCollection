@@ -6,7 +6,8 @@ module.exports = {
     max: 10,
     min: 0,
     idleTimeoutMillis: 30000,
-    log: true
+    log: true,
+    transport: "TBufferedTransport"
   },
   test: {
     domain: "127.0.0.1",
@@ -14,7 +15,8 @@ module.exports = {
     max: 10,
     min: 2,
     idleTimeoutMillis: 30000,
-    log: false
+    log: false,
+    transport: "TBufferedTransport"
   },
   integration: {
     domain: "192.168.26.90",
@@ -22,7 +24,8 @@ module.exports = {
     max: 10,
     min: 2,
     idleTimeoutMillis: 30000,
-    log: false
+    log: false,
+    transport: "TBufferedTransport"
   },
   production: {
     domain: "Chat-TT-110.ytx.com",
@@ -30,6 +33,7 @@ module.exports = {
     max: 100,
     min: 20,
     idleTimeoutMillis: 30000,
-    log: true
+    log: true,
+    transport: "TBufferedTransport"
   }
 };

@@ -9,6 +9,7 @@ module.exports =
     idleTimeoutMillis: 30000
     # if true, logs via console.log - can also be a function
     log: true
+    transport: "TBufferedTransport"
 
   test: 
     domain: "127.0.0.1"
@@ -20,6 +21,7 @@ module.exports =
     idleTimeoutMillis: 30000
     # if true, logs via console.log - can also be a function
     log: false
+    transport: "TBufferedTransport"
     
   integration: 
     domain: "192.168.26.90"
@@ -31,6 +33,8 @@ module.exports =
     idleTimeoutMillis: 30000
     # if true, logs via console.log - can also be a function
     log: false    
+    transport: "TBufferedTransport"
+
   production:
     domain: "Chat-TT-110.ytx.com"
     port: 11001
@@ -41,3 +45,4 @@ module.exports =
     idleTimeoutMillis: 30000
     # if true, logs via console.log - can also be a function
     log: true
+    transport: "TBufferedTransport"
