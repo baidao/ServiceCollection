@@ -418,6 +418,291 @@ MessageService_sendMessageToUserIdCollection_result.prototype.write = function(o
   return;
 };
 
+MessageService_getUserOnlineStatus_args = function(args) {
+  this.userIdCollection = null;
+  if (args) {
+    if (args.userIdCollection !== undefined) {
+      this.userIdCollection = args.userIdCollection;
+    }
+  }
+};
+MessageService_getUserOnlineStatus_args.prototype = {};
+MessageService_getUserOnlineStatus_args.prototype.read = function(input) {
+  input.readStructBegin();
+  while (true)
+  {
+    var ret = input.readFieldBegin();
+    var fname = ret.fname;
+    var ftype = ret.ftype;
+    var fid = ret.fid;
+    if (ftype == Thrift.Type.STOP) {
+      break;
+    }
+    switch (fid)
+    {
+      case 1:
+      if (ftype == Thrift.Type.LIST) {
+        var _size8 = 0;
+        var _rtmp312;
+        this.userIdCollection = [];
+        var _etype11 = 0;
+        _rtmp312 = input.readListBegin();
+        _etype11 = _rtmp312.etype;
+        _size8 = _rtmp312.size;
+        for (var _i13 = 0; _i13 < _size8; ++_i13)
+        {
+          var elem14 = null;
+          elem14 = new ttypes.UserId();
+          elem14.read(input);
+          this.userIdCollection.push(elem14);
+        }
+        input.readListEnd();
+      } else {
+        input.skip(ftype);
+      }
+      break;
+      case 0:
+        input.skip(ftype);
+        break;
+      default:
+        input.skip(ftype);
+    }
+    input.readFieldEnd();
+  }
+  input.readStructEnd();
+  return;
+};
+
+MessageService_getUserOnlineStatus_args.prototype.write = function(output) {
+  output.writeStructBegin('MessageService_getUserOnlineStatus_args');
+  if (this.userIdCollection !== null && this.userIdCollection !== undefined) {
+    output.writeFieldBegin('userIdCollection', Thrift.Type.LIST, 1);
+    output.writeListBegin(Thrift.Type.STRUCT, this.userIdCollection.length);
+    for (var iter15 in this.userIdCollection)
+    {
+      if (this.userIdCollection.hasOwnProperty(iter15))
+      {
+        iter15 = this.userIdCollection[iter15];
+        iter15.write(output);
+      }
+    }
+    output.writeListEnd();
+    output.writeFieldEnd();
+  }
+  output.writeFieldStop();
+  output.writeStructEnd();
+  return;
+};
+
+MessageService_getUserOnlineStatus_result = function(args) {
+  this.success = null;
+  if (args) {
+    if (args.success !== undefined) {
+      this.success = args.success;
+    }
+  }
+};
+MessageService_getUserOnlineStatus_result.prototype = {};
+MessageService_getUserOnlineStatus_result.prototype.read = function(input) {
+  input.readStructBegin();
+  while (true)
+  {
+    var ret = input.readFieldBegin();
+    var fname = ret.fname;
+    var ftype = ret.ftype;
+    var fid = ret.fid;
+    if (ftype == Thrift.Type.STOP) {
+      break;
+    }
+    switch (fid)
+    {
+      case 0:
+      if (ftype == Thrift.Type.LIST) {
+        var _size16 = 0;
+        var _rtmp320;
+        this.success = [];
+        var _etype19 = 0;
+        _rtmp320 = input.readListBegin();
+        _etype19 = _rtmp320.etype;
+        _size16 = _rtmp320.size;
+        for (var _i21 = 0; _i21 < _size16; ++_i21)
+        {
+          var elem22 = null;
+          elem22 = input.readBool();
+          this.success.push(elem22);
+        }
+        input.readListEnd();
+      } else {
+        input.skip(ftype);
+      }
+      break;
+      case 0:
+        input.skip(ftype);
+        break;
+      default:
+        input.skip(ftype);
+    }
+    input.readFieldEnd();
+  }
+  input.readStructEnd();
+  return;
+};
+
+MessageService_getUserOnlineStatus_result.prototype.write = function(output) {
+  output.writeStructBegin('MessageService_getUserOnlineStatus_result');
+  if (this.success !== null && this.success !== undefined) {
+    output.writeFieldBegin('success', Thrift.Type.LIST, 0);
+    output.writeListBegin(Thrift.Type.BOOL, this.success.length);
+    for (var iter23 in this.success)
+    {
+      if (this.success.hasOwnProperty(iter23))
+      {
+        iter23 = this.success[iter23];
+        output.writeBool(iter23);
+      }
+    }
+    output.writeListEnd();
+    output.writeFieldEnd();
+  }
+  output.writeFieldStop();
+  output.writeStructEnd();
+  return;
+};
+
+MessageService_sendMessageWithOneOfflineMessage_args = function(args) {
+  this.userIdCollection = null;
+  this.type = null;
+  this.message = null;
+  if (args) {
+    if (args.userIdCollection !== undefined) {
+      this.userIdCollection = args.userIdCollection;
+    }
+    if (args.type !== undefined) {
+      this.type = args.type;
+    }
+    if (args.message !== undefined) {
+      this.message = args.message;
+    }
+  }
+};
+MessageService_sendMessageWithOneOfflineMessage_args.prototype = {};
+MessageService_sendMessageWithOneOfflineMessage_args.prototype.read = function(input) {
+  input.readStructBegin();
+  while (true)
+  {
+    var ret = input.readFieldBegin();
+    var fname = ret.fname;
+    var ftype = ret.ftype;
+    var fid = ret.fid;
+    if (ftype == Thrift.Type.STOP) {
+      break;
+    }
+    switch (fid)
+    {
+      case 1:
+      if (ftype == Thrift.Type.LIST) {
+        var _size24 = 0;
+        var _rtmp328;
+        this.userIdCollection = [];
+        var _etype27 = 0;
+        _rtmp328 = input.readListBegin();
+        _etype27 = _rtmp328.etype;
+        _size24 = _rtmp328.size;
+        for (var _i29 = 0; _i29 < _size24; ++_i29)
+        {
+          var elem30 = null;
+          elem30 = new ttypes.UserId();
+          elem30.read(input);
+          this.userIdCollection.push(elem30);
+        }
+        input.readListEnd();
+      } else {
+        input.skip(ftype);
+      }
+      break;
+      case 2:
+      if (ftype == Thrift.Type.STRING) {
+        this.type = input.readString();
+      } else {
+        input.skip(ftype);
+      }
+      break;
+      case 3:
+      if (ftype == Thrift.Type.STRUCT) {
+        this.message = new ttypes.Message();
+        this.message.read(input);
+      } else {
+        input.skip(ftype);
+      }
+      break;
+      default:
+        input.skip(ftype);
+    }
+    input.readFieldEnd();
+  }
+  input.readStructEnd();
+  return;
+};
+
+MessageService_sendMessageWithOneOfflineMessage_args.prototype.write = function(output) {
+  output.writeStructBegin('MessageService_sendMessageWithOneOfflineMessage_args');
+  if (this.userIdCollection !== null && this.userIdCollection !== undefined) {
+    output.writeFieldBegin('userIdCollection', Thrift.Type.LIST, 1);
+    output.writeListBegin(Thrift.Type.STRUCT, this.userIdCollection.length);
+    for (var iter31 in this.userIdCollection)
+    {
+      if (this.userIdCollection.hasOwnProperty(iter31))
+      {
+        iter31 = this.userIdCollection[iter31];
+        iter31.write(output);
+      }
+    }
+    output.writeListEnd();
+    output.writeFieldEnd();
+  }
+  if (this.type !== null && this.type !== undefined) {
+    output.writeFieldBegin('type', Thrift.Type.STRING, 2);
+    output.writeString(this.type);
+    output.writeFieldEnd();
+  }
+  if (this.message !== null && this.message !== undefined) {
+    output.writeFieldBegin('message', Thrift.Type.STRUCT, 3);
+    this.message.write(output);
+    output.writeFieldEnd();
+  }
+  output.writeFieldStop();
+  output.writeStructEnd();
+  return;
+};
+
+MessageService_sendMessageWithOneOfflineMessage_result = function(args) {
+};
+MessageService_sendMessageWithOneOfflineMessage_result.prototype = {};
+MessageService_sendMessageWithOneOfflineMessage_result.prototype.read = function(input) {
+  input.readStructBegin();
+  while (true)
+  {
+    var ret = input.readFieldBegin();
+    var fname = ret.fname;
+    var ftype = ret.ftype;
+    var fid = ret.fid;
+    if (ftype == Thrift.Type.STOP) {
+      break;
+    }
+    input.skip(ftype);
+    input.readFieldEnd();
+  }
+  input.readStructEnd();
+  return;
+};
+
+MessageService_sendMessageWithOneOfflineMessage_result.prototype.write = function(output) {
+  output.writeStructBegin('MessageService_sendMessageWithOneOfflineMessage_result');
+  output.writeFieldStop();
+  output.writeStructEnd();
+  return;
+};
+
 MessageServiceClient = exports.Client = function(output, pClass) {
     this.output = output;
     this.pClass = pClass;
@@ -553,6 +838,73 @@ MessageServiceClient.prototype.recv_sendMessageToUserIdCollection = function(inp
 
   callback(null)
 };
+MessageServiceClient.prototype.getUserOnlineStatus = function(userIdCollection, callback) {
+  this.seqid += 1;
+  this._reqs[this.seqid] = callback;
+  this.send_getUserOnlineStatus(userIdCollection);
+};
+
+MessageServiceClient.prototype.send_getUserOnlineStatus = function(userIdCollection) {
+  var output = new this.pClass(this.output);
+  output.writeMessageBegin('getUserOnlineStatus', Thrift.MessageType.CALL, this.seqid);
+  var args = new MessageService_getUserOnlineStatus_args();
+  args.userIdCollection = userIdCollection;
+  args.write(output);
+  output.writeMessageEnd();
+  return this.output.flush();
+};
+
+MessageServiceClient.prototype.recv_getUserOnlineStatus = function(input,mtype,rseqid) {
+  var callback = this._reqs[rseqid] || function() {};
+  delete this._reqs[rseqid];
+  if (mtype == Thrift.MessageType.EXCEPTION) {
+    var x = new Thrift.TApplicationException();
+    x.read(input);
+    input.readMessageEnd();
+    return callback(x);
+  }
+  var result = new MessageService_getUserOnlineStatus_result();
+  result.read(input);
+  input.readMessageEnd();
+
+  if (null !== result.success) {
+    return callback(null, result.success);
+  }
+  return callback('getUserOnlineStatus failed: unknown result');
+};
+MessageServiceClient.prototype.sendMessageWithOneOfflineMessage = function(userIdCollection, type, message, callback) {
+  this.seqid += 1;
+  this._reqs[this.seqid] = callback;
+  this.send_sendMessageWithOneOfflineMessage(userIdCollection, type, message);
+};
+
+MessageServiceClient.prototype.send_sendMessageWithOneOfflineMessage = function(userIdCollection, type, message) {
+  var output = new this.pClass(this.output);
+  output.writeMessageBegin('sendMessageWithOneOfflineMessage', Thrift.MessageType.CALL, this.seqid);
+  var args = new MessageService_sendMessageWithOneOfflineMessage_args();
+  args.userIdCollection = userIdCollection;
+  args.type = type;
+  args.message = message;
+  args.write(output);
+  output.writeMessageEnd();
+  return this.output.flush();
+};
+
+MessageServiceClient.prototype.recv_sendMessageWithOneOfflineMessage = function(input,mtype,rseqid) {
+  var callback = this._reqs[rseqid] || function() {};
+  delete this._reqs[rseqid];
+  if (mtype == Thrift.MessageType.EXCEPTION) {
+    var x = new Thrift.TApplicationException();
+    x.read(input);
+    input.readMessageEnd();
+    return callback(x);
+  }
+  var result = new MessageService_sendMessageWithOneOfflineMessage_result();
+  result.read(input);
+  input.readMessageEnd();
+
+  callback(null)
+};
 MessageServiceProcessor = exports.Processor = function(handler) {
   this._handler = handler
 }
@@ -617,6 +969,32 @@ MessageServiceProcessor.prototype.process_sendMessageToUserIdCollection = functi
   this._handler.sendMessageToUserIdCollection(args.userIdCollection, args.type, args.message, function (err, result) {
     var result = new MessageService_sendMessageToUserIdCollection_result((err != null ? err : {success: result}));
     output.writeMessageBegin("sendMessageToUserIdCollection", Thrift.MessageType.REPLY, seqid);
+    result.write(output);
+    output.writeMessageEnd();
+    output.flush();
+  })
+}
+
+MessageServiceProcessor.prototype.process_getUserOnlineStatus = function(seqid, input, output) {
+  var args = new MessageService_getUserOnlineStatus_args();
+  args.read(input);
+  input.readMessageEnd();
+  this._handler.getUserOnlineStatus(args.userIdCollection, function (err, result) {
+    var result = new MessageService_getUserOnlineStatus_result((err != null ? err : {success: result}));
+    output.writeMessageBegin("getUserOnlineStatus", Thrift.MessageType.REPLY, seqid);
+    result.write(output);
+    output.writeMessageEnd();
+    output.flush();
+  })
+}
+
+MessageServiceProcessor.prototype.process_sendMessageWithOneOfflineMessage = function(seqid, input, output) {
+  var args = new MessageService_sendMessageWithOneOfflineMessage_args();
+  args.read(input);
+  input.readMessageEnd();
+  this._handler.sendMessageWithOneOfflineMessage(args.userIdCollection, args.type, args.message, function (err, result) {
+    var result = new MessageService_sendMessageWithOneOfflineMessage_result((err != null ? err : {success: result}));
+    output.writeMessageBegin("sendMessageWithOneOfflineMessage", Thrift.MessageType.REPLY, seqid);
     result.write(output);
     output.writeMessageEnd();
     output.flush();

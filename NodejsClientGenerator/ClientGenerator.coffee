@@ -32,10 +32,12 @@ buildPoolMethod = (serviceName, service, config)->
 exportClient = {}
 module.exports = 
   client: (serviceName)->
-    service = require("../ServiceCollection/#{serviceName}Protocol/gen-nodejs/MessageService")
+    service = require("../ServiceCollection/#{serviceName}Protocol/gen-nodejs/#{serviceName}")
     config = require("../ServiceCollection/#{serviceName}Protocol/config")
     unless exportClient[serviceName] 
       exportClient[serviceName]  = buildPoolMethod(serviceName, service, config)
     exportClient[serviceName] 
   ttypes: (serviceName)->
-    require("../ServiceCollection/#{serviceName}Protocol/gen-nodejs/MessageService_types")
+    require("../ServiceCollection/#{serviceName}Protocol/gen-nodejs/#{serviceName}_types")
+  contract: (serviceName)->
+    require("../ServiceCollection/#{serviceName}Protocol/gen-nodejs/#{serviceName}")

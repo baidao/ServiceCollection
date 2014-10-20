@@ -51,7 +51,7 @@ exportClient = {};
 module.exports = {
   client: function(serviceName) {
     var config, service;
-    service = require("../ServiceCollection/" + serviceName + "Protocol/gen-nodejs/MessageService");
+    service = require("../ServiceCollection/" + serviceName + "Protocol/gen-nodejs/" + serviceName);
     config = require("../ServiceCollection/" + serviceName + "Protocol/config");
     if (!exportClient[serviceName]) {
       exportClient[serviceName] = buildPoolMethod(serviceName, service, config);
@@ -59,6 +59,9 @@ module.exports = {
     return exportClient[serviceName];
   },
   ttypes: function(serviceName) {
-    return require("../ServiceCollection/" + serviceName + "Protocol/gen-nodejs/MessageService_types");
+    return require("../ServiceCollection/" + serviceName + "Protocol/gen-nodejs/" + serviceName + "_types");
+  },
+  contract: function(serviceName) {
+    return require("../ServiceCollection/" + serviceName + "Protocol/gen-nodejs/" + serviceName);
   }
 };
