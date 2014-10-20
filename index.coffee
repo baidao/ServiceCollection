@@ -1,4 +1,4 @@
 module.exports = 
-  generator: require("./NodejsClientGenerator")
-  ServiceCollection:
+  generator: require("./NodejsClientGenerator/ClientGenerator")
+  list:
     MessageService: "MessageService"
