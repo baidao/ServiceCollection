@@ -1,7 +1,7 @@
 module.exports =    
   development:
     domain: "localhost"
-    port: 11001
+    port: 11000
     max: 10
     # optional. if you set this, make sure to drain() (see step 3)
     min: 0
@@ -13,7 +13,7 @@ module.exports =
 
   test: 
     domain: "127.0.0.1"
-    port: 11001
+    port: 11000
     max: 10
     # optinal. if you set this, make sure to drain() (see step 3)
     min: 2
@@ -25,7 +25,7 @@ module.exports =
     
   integration: 
     domain: "192.168.26.90"
-    port: 11001
+    port: 11000
     max: 10
     # optinal. if you set this, make sure to drain() (see step 3)
     min: 2
@@ -37,7 +37,7 @@ module.exports =
 
   production:
     domain: "Chat-TT-110.ytx.com"
-    port: 11001
+    port: 11000
     max: 100
     # optinal. if you set this, make sure to drain() (see step 3)
     min: 20

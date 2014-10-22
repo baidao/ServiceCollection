@@ -2,7 +2,7 @@
 module.exports = {
   development: {
     domain: "localhost",
-    port: 11001,
+    port: 11000,
     max: 10,
     min: 0,
     idleTimeoutMillis: 30000,
@@ -11,7 +11,7 @@ module.exports = {
   },
   test: {
     domain: "127.0.0.1",
-    port: 11001,
+    port: 11000,
     max: 10,
     min: 2,
     idleTimeoutMillis: 30000,
@@ -20,7 +20,7 @@ module.exports = {
   },
   integration: {
     domain: "192.168.26.90",
-    port: 11001,
+    port: 11000,
     max: 10,
     min: 2,
     idleTimeoutMillis: 30000,
@@ -29,7 +29,7 @@ module.exports = {
   },
   production: {
     domain: "Chat-TT-110.ytx.com",
-    port: 11001,
+    port: 11000,
     max: 100,
     min: 20,
     idleTimeoutMillis: 30000,
