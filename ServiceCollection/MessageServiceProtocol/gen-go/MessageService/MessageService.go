@@ -2,81 +2,80 @@
  *
  * DO NOT EDIT UNLESS YOU ARE SURE THAT YOU KNOW WHAT YOU ARE DOING
  */
-package MessageService;
+package MessageService
 
 import (
-        "thrift"
-        "fmt"
+	"fmt"
+	"github.com/apache/thrift/lib/go/thrift"
 )
 
 import (
-        "os"
+	"os"
 )
-
 
 type IMessageService interface {
-  /**
-   * Parameters:
-   *  - UserId
-   */
-  Online(userId *UserId) (err os.Error)
-  /**
-   * Parameters:
-   *  - UserId
-   */
-  Offline(userId *UserId) (err os.Error)
-  /**
-   * Parameters:
-   *  - UserId
-   *  - TypeA1
-   *  - Message
-   */
-  SendMessage(userId *UserId, type_a1 string, message *Message) (err os.Error)
-  /**
-   * Parameters:
-   *  - UserIdCollection
-   *  - TypeA1
-   *  - Message
-   */
-  SendMessageToUserIdCollection(userIdCollection UserIdCollection, type_a1 string, message *Message) (err os.Error)
-  /**
-   * Parameters:
-   *  - UserIdCollection
-   */
-  GetUserOnlineStatus(userIdCollection UserIdCollection) (retval26 thrift.TList, err os.Error)
-  /**
-   * Parameters:
-   *  - UserIdCollection
-   *  - TypeA1
-   *  - Message
-   */
-  SendMessageWithOneOfflineMessage(userIdCollection UserIdCollection, type_a1 string, message *Message) (err os.Error)
+	/**
+	 * Parameters:
+	 *  - UserId
+	 */
+	Online(userId *UserId) (err os.Error)
+	/**
+	 * Parameters:
+	 *  - UserId
+	 */
+	Offline(userId *UserId) (err os.Error)
+	/**
+	 * Parameters:
+	 *  - UserId
+	 *  - TypeA1
+	 *  - Message
+	 */
+	SendMessage(userId *UserId, type_a1 string, message *Message) (err os.Error)
+	/**
+	 * Parameters:
+	 *  - UserIdCollection
+	 *  - TypeA1
+	 *  - Message
+	 */
+	SendMessageToUserIdCollection(userIdCollection UserIdCollection, type_a1 string, message *Message) (err os.Error)
+	/**
+	 * Parameters:
+	 *  - UserIdCollection
+	 */
+	GetUserOnlineStatus(userIdCollection UserIdCollection) (retval26 thrift.TList, err os.Error)
+	/**
+	 * Parameters:
+	 *  - UserIdCollection
+	 *  - TypeA1
+	 *  - Message
+	 */
+	SendMessageWithOneOfflineMessage(userIdCollection UserIdCollection, type_a1 string, message *Message) (err os.Error)
 }
 
 type MessageServiceClient struct {
-  Transport thrift.TTransport
-  ProtocolFactory thrift.TProtocolFactory
-  InputProtocol thrift.TProtocol
-  OutputProtocol thrift.TProtocol
-  SeqId int32
+	Transport       thrift.TTransport
+	ProtocolFactory thrift.TProtocolFactory
+	InputProtocol   thrift.TProtocol
+	OutputProtocol  thrift.TProtocol
+	SeqId           int32
 }
 
 func NewMessageServiceClientFactory(t thrift.TTransport, f thrift.TProtocolFactory) *MessageServiceClient {
-  return &MessageServiceClient{Transport: t,
-    ProtocolFactory: f,
-    InputProtocol: f.GetProtocol(t),
-    OutputProtocol: f.GetProtocol(t),
-    SeqId: 0,
-  }
+	return &MessageServiceClient{Transport: t,
+		ProtocolFactory: f,
+		InputProtocol:   f.GetProtocol(t),
+		OutputProtocol:  f.GetProtocol(t),
+		SeqId:           0,
+	}
 }
 
 func NewMessageServiceClientProtocol(t thrift.TTransport, iprot thrift.TProtocol, oprot thrift.TProtocol) *MessageServiceClient {
-  return &MessageServiceClient{Transport: t,
-    ProtocolFactory: nil,
-    InputProtocol: iprot,
-    OutputProtocol: oprot,
-    SeqId: 0,
-  }
+	return &MessageServiceClient{Transport: t,
+		ProtocolFactory: nil,
+		InputProtocol:   iprot,
+		OutputProtocol:  oprot,
+		SeqId:           0,
+	}
 }
 
 /**
@@ -84,58 +83,59 @@ func NewMessageServiceClientProtocol(t thrift.TTransport, iprot thrift.TProtocol
  *  - UserId
  */
 func (p *MessageServiceClient) Online(userId *UserId) (err os.Error) {
-  err = p.SendOnline(userId)
-  if err != nil { return }
-  return p.RecvOnline()
+	err = p.SendOnline(userId)
+	if err != nil {
+		return
+	}
+	return p.RecvOnline()
 }
 
-func (p *MessageServiceClient) SendOnline(userId *UserId)(err os.Error) {
-  oprot := p.OutputProtocol
-  if oprot != nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  oprot.WriteMessageBegin("online", thrift.CALL, p.SeqId)
-  args29 := NewOnlineArgs()
-  args29.UserId = userId
-  err = args29.Write(oprot)
-  oprot.WriteMessageEnd()
-  oprot.Transport().Flush()
-  return
+func (p *MessageServiceClient) SendOnline(userId *UserId) (err os.Error) {
+	oprot := p.OutputProtocol
+	if oprot != nil {
+		oprot = p.ProtocolFactory.GetProtocol(p.Transport)
+		p.OutputProtocol = oprot
+	}
+	p.SeqId++
+	oprot.WriteMessageBegin("online", thrift.CALL, p.SeqId)
+	args29 := NewOnlineArgs()
+	args29.UserId = userId
+	err = args29.Write(oprot)
+	oprot.WriteMessageEnd()
+	oprot.Transport().Flush()
+	return
 }
-
 
 func (p *MessageServiceClient) RecvOnline() (err os.Error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  _, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error31 := thrift.NewTApplicationExceptionDefault()
-    error32, err := error31.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error32
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewTApplicationException(thrift.BAD_SEQUENCE_ID, "ping failed: out of sequence response")
-    return
-  }
-  result30 := NewOnlineResult()
-  err = result30.Read(iprot)
-  iprot.ReadMessageEnd()
-  return
+	iprot := p.InputProtocol
+	if iprot == nil {
+		iprot = p.ProtocolFactory.GetProtocol(p.Transport)
+		p.InputProtocol = iprot
+	}
+	_, mTypeId, seqId, err := iprot.ReadMessageBegin()
+	if err != nil {
+		return
+	}
+	if mTypeId == thrift.EXCEPTION {
+		error31 := thrift.NewTApplicationExceptionDefault()
+		error32, err := error31.Read(iprot)
+		if err != nil {
+			return
+		}
+		if err = iprot.ReadMessageEnd(); err != nil {
+			return
+		}
+		err = error32
+		return
+	}
+	if p.SeqId != seqId {
+		err = thrift.NewTApplicationException(thrift.BAD_SEQUENCE_ID, "ping failed: out of sequence response")
+		return
+	}
+	result30 := NewOnlineResult()
+	err = result30.Read(iprot)
+	iprot.ReadMessageEnd()
+	return
 }
 
 /**
@@ -143,58 +143,59 @@ func (p *MessageServiceClient) RecvOnline() (err os.Error) {
  *  - UserId
  */
 func (p *MessageServiceClient) Offline(userId *UserId) (err os.Error) {
-  err = p.SendOffline(userId)
-  if err != nil { return }
-  return p.RecvOffline()
+	err = p.SendOffline(userId)
+	if err != nil {
+		return
+	}
+	return p.RecvOffline()
 }
 
-func (p *MessageServiceClient) SendOffline(userId *UserId)(err os.Error) {
-  oprot := p.OutputProtocol
-  if oprot != nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  oprot.WriteMessageBegin("offline", thrift.CALL, p.SeqId)
-  args34 := NewOfflineArgs()
-  args34.UserId = userId
-  err = args34.Write(oprot)
-  oprot.WriteMessageEnd()
-  oprot.Transport().Flush()
-  return
+func (p *MessageServiceClient) SendOffline(userId *UserId) (err os.Error) {
+	oprot := p.OutputProtocol
+	if oprot != nil {
+		oprot = p.ProtocolFactory.GetProtocol(p.Transport)
+		p.OutputProtocol = oprot
+	}
+	p.SeqId++
+	oprot.WriteMessageBegin("offline", thrift.CALL, p.SeqId)
+	args34 := NewOfflineArgs()
+	args34.UserId = userId
+	err = args34.Write(oprot)
+	oprot.WriteMessageEnd()
+	oprot.Transport().Flush()
+	return
 }
-
 
 func (p *MessageServiceClient) RecvOffline() (err os.Error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  _, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error36 := thrift.NewTApplicationExceptionDefault()
-    error37, err := error36.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error37
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewTApplicationException(thrift.BAD_SEQUENCE_ID, "ping failed: out of sequence response")
-    return
-  }
-  result35 := NewOfflineResult()
-  err = result35.Read(iprot)
-  iprot.ReadMessageEnd()
-  return
+	iprot := p.InputProtocol
+	if iprot == nil {
+		iprot = p.ProtocolFactory.GetProtocol(p.Transport)
+		p.InputProtocol = iprot
+	}
+	_, mTypeId, seqId, err := iprot.ReadMessageBegin()
+	if err != nil {
+		return
+	}
+	if mTypeId == thrift.EXCEPTION {
+		error36 := thrift.NewTApplicationExceptionDefault()
+		error37, err := error36.Read(iprot)
+		if err != nil {
+			return
+		}
+		if err = iprot.ReadMessageEnd(); err != nil {
+			return
+		}
+		err = error37
+		return
+	}
+	if p.SeqId != seqId {
+		err = thrift.NewTApplicationException(thrift.BAD_SEQUENCE_ID, "ping failed: out of sequence response")
+		return
+	}
+	result35 := NewOfflineResult()
+	err = result35.Read(iprot)
+	iprot.ReadMessageEnd()
+	return
 }
 
 /**
@@ -204,60 +205,61 @@ func (p *MessageServiceClient) RecvOffline() (err os.Error) {
  *  - Message
  */
 func (p *MessageServiceClient) SendMessage(userId *UserId, type_a1 string, message *Message) (err os.Error) {
-  err = p.SendSendMessage(userId, type_a1, message)
-  if err != nil { return }
-  return p.RecvSendMessage()
+	err = p.SendSendMessage(userId, type_a1, message)
+	if err != nil {
+		return
+	}
+	return p.RecvSendMessage()
 }
 
-func (p *MessageServiceClient) SendSendMessage(userId *UserId, type_a1 string, message *Message)(err os.Error) {
-  oprot := p.OutputProtocol
-  if oprot != nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  oprot.WriteMessageBegin("sendMessage", thrift.CALL, p.SeqId)
-  args39 := NewSendMessageArgs()
-  args39.UserId = userId
-  args39.TypeA1 = type_a1
-  args39.Message = message
-  err = args39.Write(oprot)
-  oprot.WriteMessageEnd()
-  oprot.Transport().Flush()
-  return
+func (p *MessageServiceClient) SendSendMessage(userId *UserId, type_a1 string, message *Message) (err os.Error) {
+	oprot := p.OutputProtocol
+	if oprot != nil {
+		oprot = p.ProtocolFactory.GetProtocol(p.Transport)
+		p.OutputProtocol = oprot
+	}
+	p.SeqId++
+	oprot.WriteMessageBegin("sendMessage", thrift.CALL, p.SeqId)
+	args39 := NewSendMessageArgs()
+	args39.UserId = userId
+	args39.TypeA1 = type_a1
+	args39.Message = message
+	err = args39.Write(oprot)
+	oprot.WriteMessageEnd()
+	oprot.Transport().Flush()
+	return
 }
-
 
 func (p *MessageServiceClient) RecvSendMessage() (err os.Error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  _, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error41 := thrift.NewTApplicationExceptionDefault()
-    error42, err := error41.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error42
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewTApplicationException(thrift.BAD_SEQUENCE_ID, "ping failed: out of sequence response")
-    return
-  }
-  result40 := NewSendMessageResult()
-  err = result40.Read(iprot)
-  iprot.ReadMessageEnd()
-  return
+	iprot := p.InputProtocol
+	if iprot == nil {
+		iprot = p.ProtocolFactory.GetProtocol(p.Transport)
+		p.InputProtocol = iprot
+	}
+	_, mTypeId, seqId, err := iprot.ReadMessageBegin()
+	if err != nil {
+		return
+	}
+	if mTypeId == thrift.EXCEPTION {
+		error41 := thrift.NewTApplicationExceptionDefault()
+		error42, err := error41.Read(iprot)
+		if err != nil {
+			return
+		}
+		if err = iprot.ReadMessageEnd(); err != nil {
+			return
+		}
+		err = error42
+		return
+	}
+	if p.SeqId != seqId {
+		err = thrift.NewTApplicationException(thrift.BAD_SEQUENCE_ID, "ping failed: out of sequence response")
+		return
+	}
+	result40 := NewSendMessageResult()
+	err = result40.Read(iprot)
+	iprot.ReadMessageEnd()
+	return
 }
 
 /**
@@ -267,60 +269,61 @@ func (p *MessageServiceClient) RecvSendMessage() (err os.Error) {
  *  - Message
  */
 func (p *MessageServiceClient) SendMessageToUserIdCollection(userIdCollection UserIdCollection, type_a1 string, message *Message) (err os.Error) {
-  err = p.SendSendMessageToUserIdCollection(userIdCollection, type_a1, message)
-  if err != nil { return }
-  return p.RecvSendMessageToUserIdCollection()
+	err = p.SendSendMessageToUserIdCollection(userIdCollection, type_a1, message)
+	if err != nil {
+		return
+	}
+	return p.RecvSendMessageToUserIdCollection()
 }
 
-func (p *MessageServiceClient) SendSendMessageToUserIdCollection(userIdCollection UserIdCollection, type_a1 string, message *Message)(err os.Error) {
-  oprot := p.OutputProtocol
-  if oprot != nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  oprot.WriteMessageBegin("sendMessageToUserIdCollection", thrift.CALL, p.SeqId)
-  args44 := NewSendMessageToUserIdCollectionArgs()
-  args44.UserIdCollection = userIdCollection
-  args44.TypeA1 = type_a1
-  args44.Message = message
-  err = args44.Write(oprot)
-  oprot.WriteMessageEnd()
-  oprot.Transport().Flush()
-  return
+func (p *MessageServiceClient) SendSendMessageToUserIdCollection(userIdCollection UserIdCollection, type_a1 string, message *Message) (err os.Error) {
+	oprot := p.OutputProtocol
+	if oprot != nil {
+		oprot = p.ProtocolFactory.GetProtocol(p.Transport)
+		p.OutputProtocol = oprot
+	}
+	p.SeqId++
+	oprot.WriteMessageBegin("sendMessageToUserIdCollection", thrift.CALL, p.SeqId)
+	args44 := NewSendMessageToUserIdCollectionArgs()
+	args44.UserIdCollection = userIdCollection
+	args44.TypeA1 = type_a1
+	args44.Message = message
+	err = args44.Write(oprot)
+	oprot.WriteMessageEnd()
+	oprot.Transport().Flush()
+	return
 }
-
 
 func (p *MessageServiceClient) RecvSendMessageToUserIdCollection() (err os.Error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  _, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error46 := thrift.NewTApplicationExceptionDefault()
-    error47, err := error46.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error47
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewTApplicationException(thrift.BAD_SEQUENCE_ID, "ping failed: out of sequence response")
-    return
-  }
-  result45 := NewSendMessageToUserIdCollectionResult()
-  err = result45.Read(iprot)
-  iprot.ReadMessageEnd()
-  return
+	iprot := p.InputProtocol
+	if iprot == nil {
+		iprot = p.ProtocolFactory.GetProtocol(p.Transport)
+		p.InputProtocol = iprot
+	}
+	_, mTypeId, seqId, err := iprot.ReadMessageBegin()
+	if err != nil {
+		return
+	}
+	if mTypeId == thrift.EXCEPTION {
+		error46 := thrift.NewTApplicationExceptionDefault()
+		error47, err := error46.Read(iprot)
+		if err != nil {
+			return
+		}
+		if err = iprot.ReadMessageEnd(); err != nil {
+			return
+		}
+		err = error47
+		return
+	}
+	if p.SeqId != seqId {
+		err = thrift.NewTApplicationException(thrift.BAD_SEQUENCE_ID, "ping failed: out of sequence response")
+		return
+	}
+	result45 := NewSendMessageToUserIdCollectionResult()
+	err = result45.Read(iprot)
+	iprot.ReadMessageEnd()
+	return
 }
 
 /**
@@ -328,59 +331,60 @@ func (p *MessageServiceClient) RecvSendMessageToUserIdCollection() (err os.Error
  *  - UserIdCollection
  */
 func (p *MessageServiceClient) GetUserOnlineStatus(userIdCollection UserIdCollection) (retval48 thrift.TList, err os.Error) {
-  err = p.SendGetUserOnlineStatus(userIdCollection)
-  if err != nil { return }
-  return p.RecvGetUserOnlineStatus()
+	err = p.SendGetUserOnlineStatus(userIdCollection)
+	if err != nil {
+		return
+	}
+	return p.RecvGetUserOnlineStatus()
 }
 
-func (p *MessageServiceClient) SendGetUserOnlineStatus(userIdCollection UserIdCollection)(err os.Error) {
-  oprot := p.OutputProtocol
-  if oprot != nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  oprot.WriteMessageBegin("getUserOnlineStatus", thrift.CALL, p.SeqId)
-  args49 := NewGetUserOnlineStatusArgs()
-  args49.UserIdCollection = userIdCollection
-  err = args49.Write(oprot)
-  oprot.WriteMessageEnd()
-  oprot.Transport().Flush()
-  return
+func (p *MessageServiceClient) SendGetUserOnlineStatus(userIdCollection UserIdCollection) (err os.Error) {
+	oprot := p.OutputProtocol
+	if oprot != nil {
+		oprot = p.ProtocolFactory.GetProtocol(p.Transport)
+		p.OutputProtocol = oprot
+	}
+	p.SeqId++
+	oprot.WriteMessageBegin("getUserOnlineStatus", thrift.CALL, p.SeqId)
+	args49 := NewGetUserOnlineStatusArgs()
+	args49.UserIdCollection = userIdCollection
+	err = args49.Write(oprot)
+	oprot.WriteMessageEnd()
+	oprot.Transport().Flush()
+	return
 }
-
 
 func (p *MessageServiceClient) RecvGetUserOnlineStatus() (value thrift.TList, err os.Error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  _, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error51 := thrift.NewTApplicationExceptionDefault()
-    error52, err := error51.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error52
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewTApplicationException(thrift.BAD_SEQUENCE_ID, "ping failed: out of sequence response")
-    return
-  }
-  result50 := NewGetUserOnlineStatusResult()
-  err = result50.Read(iprot)
-  iprot.ReadMessageEnd()
-  value = result50.Success
-  return
+	iprot := p.InputProtocol
+	if iprot == nil {
+		iprot = p.ProtocolFactory.GetProtocol(p.Transport)
+		p.InputProtocol = iprot
+	}
+	_, mTypeId, seqId, err := iprot.ReadMessageBegin()
+	if err != nil {
+		return
+	}
+	if mTypeId == thrift.EXCEPTION {
+		error51 := thrift.NewTApplicationExceptionDefault()
+		error52, err := error51.Read(iprot)
+		if err != nil {
+			return
+		}
+		if err = iprot.ReadMessageEnd(); err != nil {
+			return
+		}
+		err = error52
+		return
+	}
+	if p.SeqId != seqId {
+		err = thrift.NewTApplicationException(thrift.BAD_SEQUENCE_ID, "ping failed: out of sequence response")
+		return
+	}
+	result50 := NewGetUserOnlineStatusResult()
+	err = result50.Read(iprot)
+	iprot.ReadMessageEnd()
+	value = result50.Success
+	return
 }
 
 /**
@@ -390,372 +394,373 @@ func (p *MessageServiceClient) RecvGetUserOnlineStatus() (value thrift.TList, er
  *  - Message
  */
 func (p *MessageServiceClient) SendMessageWithOneOfflineMessage(userIdCollection UserIdCollection, type_a1 string, message *Message) (err os.Error) {
-  err = p.SendSendMessageWithOneOfflineMessage(userIdCollection, type_a1, message)
-  if err != nil { return }
-  return p.RecvSendMessageWithOneOfflineMessage()
+	err = p.SendSendMessageWithOneOfflineMessage(userIdCollection, type_a1, message)
+	if err != nil {
+		return
+	}
+	return p.RecvSendMessageWithOneOfflineMessage()
 }
 
-func (p *MessageServiceClient) SendSendMessageWithOneOfflineMessage(userIdCollection UserIdCollection, type_a1 string, message *Message)(err os.Error) {
-  oprot := p.OutputProtocol
-  if oprot != nil {
-    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.OutputProtocol = oprot
-  }
-  p.SeqId++
-  oprot.WriteMessageBegin("sendMessageWithOneOfflineMessage", thrift.CALL, p.SeqId)
-  args54 := NewSendMessageWithOneOfflineMessageArgs()
-  args54.UserIdCollection = userIdCollection
-  args54.TypeA1 = type_a1
-  args54.Message = message
-  err = args54.Write(oprot)
-  oprot.WriteMessageEnd()
-  oprot.Transport().Flush()
-  return
+func (p *MessageServiceClient) SendSendMessageWithOneOfflineMessage(userIdCollection UserIdCollection, type_a1 string, message *Message) (err os.Error) {
+	oprot := p.OutputProtocol
+	if oprot != nil {
+		oprot = p.ProtocolFactory.GetProtocol(p.Transport)
+		p.OutputProtocol = oprot
+	}
+	p.SeqId++
+	oprot.WriteMessageBegin("sendMessageWithOneOfflineMessage", thrift.CALL, p.SeqId)
+	args54 := NewSendMessageWithOneOfflineMessageArgs()
+	args54.UserIdCollection = userIdCollection
+	args54.TypeA1 = type_a1
+	args54.Message = message
+	err = args54.Write(oprot)
+	oprot.WriteMessageEnd()
+	oprot.Transport().Flush()
+	return
 }
-
 
 func (p *MessageServiceClient) RecvSendMessageWithOneOfflineMessage() (err os.Error) {
-  iprot := p.InputProtocol
-  if iprot == nil {
-    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
-    p.InputProtocol = iprot
-  }
-  _, mTypeId, seqId, err := iprot.ReadMessageBegin()
-  if err != nil {
-    return
-  }
-  if mTypeId == thrift.EXCEPTION {
-    error56 := thrift.NewTApplicationExceptionDefault()
-    error57, err := error56.Read(iprot)
-    if err != nil {
-      return
-    }
-    if err = iprot.ReadMessageEnd(); err != nil {
-      return
-    }
-    err = error57
-    return
-  }
-  if p.SeqId != seqId {
-    err = thrift.NewTApplicationException(thrift.BAD_SEQUENCE_ID, "ping failed: out of sequence response")
-    return
-  }
-  result55 := NewSendMessageWithOneOfflineMessageResult()
-  err = result55.Read(iprot)
-  iprot.ReadMessageEnd()
-  return
+	iprot := p.InputProtocol
+	if iprot == nil {
+		iprot = p.ProtocolFactory.GetProtocol(p.Transport)
+		p.InputProtocol = iprot
+	}
+	_, mTypeId, seqId, err := iprot.ReadMessageBegin()
+	if err != nil {
+		return
+	}
+	if mTypeId == thrift.EXCEPTION {
+		error56 := thrift.NewTApplicationExceptionDefault()
+		error57, err := error56.Read(iprot)
+		if err != nil {
+			return
+		}
+		if err = iprot.ReadMessageEnd(); err != nil {
+			return
+		}
+		err = error57
+		return
+	}
+	if p.SeqId != seqId {
+		err = thrift.NewTApplicationException(thrift.BAD_SEQUENCE_ID, "ping failed: out of sequence response")
+		return
+	}
+	result55 := NewSendMessageWithOneOfflineMessageResult()
+	err = result55.Read(iprot)
+	iprot.ReadMessageEnd()
+	return
 }
 
-
 type MessageServiceProcessor struct {
-  handler IMessageService
-  processorMap map[string]thrift.TProcessorFunction
+	handler      IMessageService
+	processorMap map[string]thrift.TProcessorFunction
 }
 
 func (p *MessageServiceProcessor) Handler() IMessageService {
-  return p.handler
+	return p.handler
 }
 
 func (p *MessageServiceProcessor) AddToProcessorMap(key string, processor thrift.TProcessorFunction) {
-  p.processorMap[key] = processor
+	p.processorMap[key] = processor
 }
 
 func (p *MessageServiceProcessor) GetProcessorFunction(key string) (processor thrift.TProcessorFunction, exists bool) {
-  processor, exists = p.processorMap[key]
-  return processor, exists
+	processor, exists = p.processorMap[key]
+	return processor, exists
 }
 
 func (p *MessageServiceProcessor) ProcessorMap() map[string]thrift.TProcessorFunction {
-  return p.processorMap
+	return p.processorMap
 }
 
 func NewMessageServiceProcessor(handler IMessageService) *MessageServiceProcessor {
 
-  self58 := &MessageServiceProcessor{handler:handler, processorMap:make(map[string]thrift.TProcessorFunction)}
-  self58.processorMap["online"] = &messageServiceProcessorOnline{handler:handler}
-  self58.processorMap["offline"] = &messageServiceProcessorOffline{handler:handler}
-  self58.processorMap["sendMessage"] = &messageServiceProcessorSendMessage{handler:handler}
-  self58.processorMap["sendMessageToUserIdCollection"] = &messageServiceProcessorSendMessageToUserIdCollection{handler:handler}
-  self58.processorMap["getUserOnlineStatus"] = &messageServiceProcessorGetUserOnlineStatus{handler:handler}
-  self58.processorMap["sendMessageWithOneOfflineMessage"] = &messageServiceProcessorSendMessageWithOneOfflineMessage{handler:handler}
-return self58
+	self58 := &MessageServiceProcessor{handler: handler, processorMap: make(map[string]thrift.TProcessorFunction)}
+	self58.processorMap["online"] = &messageServiceProcessorOnline{handler: handler}
+	self58.processorMap["offline"] = &messageServiceProcessorOffline{handler: handler}
+	self58.processorMap["sendMessage"] = &messageServiceProcessorSendMessage{handler: handler}
+	self58.processorMap["sendMessageToUserIdCollection"] = &messageServiceProcessorSendMessageToUserIdCollection{handler: handler}
+	self58.processorMap["getUserOnlineStatus"] = &messageServiceProcessorGetUserOnlineStatus{handler: handler}
+	self58.processorMap["sendMessageWithOneOfflineMessage"] = &messageServiceProcessorSendMessageWithOneOfflineMessage{handler: handler}
+	return self58
 }
 
 func (p *MessageServiceProcessor) Process(iprot, oprot thrift.TProtocol) (success bool, err thrift.TException) {
-  name, _, seqId, err := iprot.ReadMessageBegin()
-  if err != nil { return }
-  process, nameFound := p.GetProcessorFunction(name)
-  if !nameFound || process == nil {
-    iprot.Skip(thrift.STRUCT)
-    iprot.ReadMessageEnd()
-    x59 := thrift.NewTApplicationException(thrift.UNKNOWN_METHOD, "Unknown function " + name)
-    oprot.WriteMessageBegin(name, thrift.EXCEPTION, seqId)
-    x59.Write(oprot)
-    oprot.WriteMessageEnd()
-    oprot.Transport().Flush()
-    return false, x59
-  }
-  return process.Process(seqId, iprot, oprot)
+	name, _, seqId, err := iprot.ReadMessageBegin()
+	if err != nil {
+		return
+	}
+	process, nameFound := p.GetProcessorFunction(name)
+	if !nameFound || process == nil {
+		iprot.Skip(thrift.STRUCT)
+		iprot.ReadMessageEnd()
+		x59 := thrift.NewTApplicationException(thrift.UNKNOWN_METHOD, "Unknown function "+name)
+		oprot.WriteMessageBegin(name, thrift.EXCEPTION, seqId)
+		x59.Write(oprot)
+		oprot.WriteMessageEnd()
+		oprot.Transport().Flush()
+		return false, x59
+	}
+	return process.Process(seqId, iprot, oprot)
 }
 
 type messageServiceProcessorOnline struct {
-  handler IMessageService
+	handler IMessageService
 }
 
 func (p *messageServiceProcessorOnline) Process(seqId int32, iprot, oprot thrift.TProtocol) (success bool, err thrift.TException) {
-  args := NewOnlineArgs()
-  if err = args.Read(iprot); err != nil {
-    iprot.ReadMessageEnd()
-    x := thrift.NewTApplicationException(thrift.PROTOCOL_ERROR, err.String())
-    oprot.WriteMessageBegin("online", thrift.EXCEPTION, seqId)
-    x.Write(oprot)
-    oprot.WriteMessageEnd()
-    oprot.Transport().Flush()
-    return
-  }
-  iprot.ReadMessageEnd()
-  result := NewOnlineResult()
-  if err = p.handler.Online(args.UserId); err != nil {
-    x := thrift.NewTApplicationException(thrift.INTERNAL_ERROR, "Internal error processing online: " + err.String())
-    oprot.WriteMessageBegin("online", thrift.EXCEPTION, seqId)
-    x.Write(oprot)
-    oprot.WriteMessageEnd()
-    oprot.Transport().Flush()
-    return
-  }
-  if err2 := oprot.WriteMessageBegin("online", thrift.REPLY, seqId); err2 != nil {
-    err = err2
-  }
-  if err2 := result.Write(oprot); err == nil && err2 != nil {
-    err = err2
-  }
-  if err2 := oprot.WriteMessageEnd(); err == nil && err2 != nil {
-    err = err2
-  }
-  if err2 := oprot.Transport().Flush(); err == nil && err2 != nil {
-    err = err2
-  }
-  if err != nil {
-    return
-  }
-  return true, err
+	args := NewOnlineArgs()
+	if err = args.Read(iprot); err != nil {
+		iprot.ReadMessageEnd()
+		x := thrift.NewTApplicationException(thrift.PROTOCOL_ERROR, err.String())
+		oprot.WriteMessageBegin("online", thrift.EXCEPTION, seqId)
+		x.Write(oprot)
+		oprot.WriteMessageEnd()
+		oprot.Transport().Flush()
+		return
+	}
+	iprot.ReadMessageEnd()
+	result := NewOnlineResult()
+	if err = p.handler.Online(args.UserId); err != nil {
+		x := thrift.NewTApplicationException(thrift.INTERNAL_ERROR, "Internal error processing online: "+err.String())
+		oprot.WriteMessageBegin("online", thrift.EXCEPTION, seqId)
+		x.Write(oprot)
+		oprot.WriteMessageEnd()
+		oprot.Transport().Flush()
+		return
+	}
+	if err2 := oprot.WriteMessageBegin("online", thrift.REPLY, seqId); err2 != nil {
+		err = err2
+	}
+	if err2 := result.Write(oprot); err == nil && err2 != nil {
+		err = err2
+	}
+	if err2 := oprot.WriteMessageEnd(); err == nil && err2 != nil {
+		err = err2
+	}
+	if err2 := oprot.Transport().Flush(); err == nil && err2 != nil {
+		err = err2
+	}
+	if err != nil {
+		return
+	}
+	return true, err
 }
 
 type messageServiceProcessorOffline struct {
-  handler IMessageService
+	handler IMessageService
 }
 
 func (p *messageServiceProcessorOffline) Process(seqId int32, iprot, oprot thrift.TProtocol) (success bool, err thrift.TException) {
-  args := NewOfflineArgs()
-  if err = args.Read(iprot); err != nil {
-    iprot.ReadMessageEnd()
-    x := thrift.NewTApplicationException(thrift.PROTOCOL_ERROR, err.String())
-    oprot.WriteMessageBegin("offline", thrift.EXCEPTION, seqId)
-    x.Write(oprot)
-    oprot.WriteMessageEnd()
-    oprot.Transport().Flush()
-    return
-  }
-  iprot.ReadMessageEnd()
-  result := NewOfflineResult()
-  if err = p.handler.Offline(args.UserId); err != nil {
-    x := thrift.NewTApplicationException(thrift.INTERNAL_ERROR, "Internal error processing offline: " + err.String())
-    oprot.WriteMessageBegin("offline", thrift.EXCEPTION, seqId)
-    x.Write(oprot)
-    oprot.WriteMessageEnd()
-    oprot.Transport().Flush()
-    return
-  }
-  if err2 := oprot.WriteMessageBegin("offline", thrift.REPLY, seqId); err2 != nil {
-    err = err2
-  }
-  if err2 := result.Write(oprot); err == nil && err2 != nil {
-    err = err2
-  }
-  if err2 := oprot.WriteMessageEnd(); err == nil && err2 != nil {
-    err = err2
-  }
-  if err2 := oprot.Transport().Flush(); err == nil && err2 != nil {
-    err = err2
-  }
-  if err != nil {
-    return
-  }
-  return true, err
+	args := NewOfflineArgs()
+	if err = args.Read(iprot); err != nil {
+		iprot.ReadMessageEnd()
+		x := thrift.NewTApplicationException(thrift.PROTOCOL_ERROR, err.String())
+		oprot.WriteMessageBegin("offline", thrift.EXCEPTION, seqId)
+		x.Write(oprot)
+		oprot.WriteMessageEnd()
+		oprot.Transport().Flush()
+		return
+	}
+	iprot.ReadMessageEnd()
+	result := NewOfflineResult()
+	if err = p.handler.Offline(args.UserId); err != nil {
+		x := thrift.NewTApplicationException(thrift.INTERNAL_ERROR, "Internal error processing offline: "+err.String())
+		oprot.WriteMessageBegin("offline", thrift.EXCEPTION, seqId)
+		x.Write(oprot)
+		oprot.WriteMessageEnd()
+		oprot.Transport().Flush()
+		return
+	}
+	if err2 := oprot.WriteMessageBegin("offline", thrift.REPLY, seqId); err2 != nil {
+		err = err2
+	}
+	if err2 := result.Write(oprot); err == nil && err2 != nil {
+		err = err2
+	}
+	if err2 := oprot.WriteMessageEnd(); err == nil && err2 != nil {
+		err = err2
+	}
+	if err2 := oprot.Transport().Flush(); err == nil && err2 != nil {
+		err = err2
+	}
+	if err != nil {
+		return
+	}
+	return true, err
 }
 
 type messageServiceProcessorSendMessage struct {
-  handler IMessageService
+	handler IMessageService
 }
 
 func (p *messageServiceProcessorSendMessage) Process(seqId int32, iprot, oprot thrift.TProtocol) (success bool, err thrift.TException) {
-  args := NewSendMessageArgs()
-  if err = args.Read(iprot); err != nil {
-    iprot.ReadMessageEnd()
-    x := thrift.NewTApplicationException(thrift.PROTOCOL_ERROR, err.String())
-    oprot.WriteMessageBegin("sendMessage", thrift.EXCEPTION, seqId)
-    x.Write(oprot)
-    oprot.WriteMessageEnd()
-    oprot.Transport().Flush()
-    return
-  }
-  iprot.ReadMessageEnd()
-  result := NewSendMessageResult()
-  if err = p.handler.SendMessage(args.UserId, args.TypeA1, args.Message); err != nil {
-    x := thrift.NewTApplicationException(thrift.INTERNAL_ERROR, "Internal error processing sendMessage: " + err.String())
-    oprot.WriteMessageBegin("sendMessage", thrift.EXCEPTION, seqId)
-    x.Write(oprot)
-    oprot.WriteMessageEnd()
-    oprot.Transport().Flush()
-    return
-  }
-  if err2 := oprot.WriteMessageBegin("sendMessage", thrift.REPLY, seqId); err2 != nil {
-    err = err2
-  }
-  if err2 := result.Write(oprot); err == nil && err2 != nil {
-    err = err2
-  }
-  if err2 := oprot.WriteMessageEnd(); err == nil && err2 != nil {
-    err = err2
-  }
-  if err2 := oprot.Transport().Flush(); err == nil && err2 != nil {
-    err = err2
-  }
-  if err != nil {
-    return
-  }
-  return true, err
+	args := NewSendMessageArgs()
+	if err = args.Read(iprot); err != nil {
+		iprot.ReadMessageEnd()
+		x := thrift.NewTApplicationException(thrift.PROTOCOL_ERROR, err.String())
+		oprot.WriteMessageBegin("sendMessage", thrift.EXCEPTION, seqId)
+		x.Write(oprot)
+		oprot.WriteMessageEnd()
+		oprot.Transport().Flush()
+		return
+	}
+	iprot.ReadMessageEnd()
+	result := NewSendMessageResult()
+	if err = p.handler.SendMessage(args.UserId, args.TypeA1, args.Message); err != nil {
+		x := thrift.NewTApplicationException(thrift.INTERNAL_ERROR, "Internal error processing sendMessage: "+err.String())
+		oprot.WriteMessageBegin("sendMessage", thrift.EXCEPTION, seqId)
+		x.Write(oprot)
+		oprot.WriteMessageEnd()
+		oprot.Transport().Flush()
+		return
+	}
+	if err2 := oprot.WriteMessageBegin("sendMessage", thrift.REPLY, seqId); err2 != nil {
+		err = err2
+	}
+	if err2 := result.Write(oprot); err == nil && err2 != nil {
+		err = err2
+	}
+	if err2 := oprot.WriteMessageEnd(); err == nil && err2 != nil {
+		err = err2
+	}
+	if err2 := oprot.Transport().Flush(); err == nil && err2 != nil {
+		err = err2
+	}
+	if err != nil {
+		return
+	}
+	return true, err
 }
 
 type messageServiceProcessorSendMessageToUserIdCollection struct {
-  handler IMessageService
+	handler IMessageService
 }
 
 func (p *messageServiceProcessorSendMessageToUserIdCollection) Process(seqId int32, iprot, oprot thrift.TProtocol) (success bool, err thrift.TException) {
-  args := NewSendMessageToUserIdCollectionArgs()
-  if err = args.Read(iprot); err != nil {
-    iprot.ReadMessageEnd()
-    x := thrift.NewTApplicationException(thrift.PROTOCOL_ERROR, err.String())
-    oprot.WriteMessageBegin("sendMessageToUserIdCollection", thrift.EXCEPTION, seqId)
-    x.Write(oprot)
-    oprot.WriteMessageEnd()
-    oprot.Transport().Flush()
-    return
-  }
-  iprot.ReadMessageEnd()
-  result := NewSendMessageToUserIdCollectionResult()
-  if err = p.handler.SendMessageToUserIdCollection(args.UserIdCollection, args.TypeA1, args.Message); err != nil {
-    x := thrift.NewTApplicationException(thrift.INTERNAL_ERROR, "Internal error processing sendMessageToUserIdCollection: " + err.String())
-    oprot.WriteMessageBegin("sendMessageToUserIdCollection", thrift.EXCEPTION, seqId)
-    x.Write(oprot)
-    oprot.WriteMessageEnd()
-    oprot.Transport().Flush()
-    return
-  }
-  if err2 := oprot.WriteMessageBegin("sendMessageToUserIdCollection", thrift.REPLY, seqId); err2 != nil {
-    err = err2
-  }
-  if err2 := result.Write(oprot); err == nil && err2 != nil {
-    err = err2
-  }
-  if err2 := oprot.WriteMessageEnd(); err == nil && err2 != nil {
-    err = err2
-  }
-  if err2 := oprot.Transport().Flush(); err == nil && err2 != nil {
-    err = err2
-  }
-  if err != nil {
-    return
-  }
-  return true, err
+	args := NewSendMessageToUserIdCollectionArgs()
+	if err = args.Read(iprot); err != nil {
+		iprot.ReadMessageEnd()
+		x := thrift.NewTApplicationException(thrift.PROTOCOL_ERROR, err.String())
+		oprot.WriteMessageBegin("sendMessageToUserIdCollection", thrift.EXCEPTION, seqId)
+		x.Write(oprot)
+		oprot.WriteMessageEnd()
+		oprot.Transport().Flush()
+		return
+	}
+	iprot.ReadMessageEnd()
+	result := NewSendMessageToUserIdCollectionResult()
+	if err = p.handler.SendMessageToUserIdCollection(args.UserIdCollection, args.TypeA1, args.Message); err != nil {
+		x := thrift.NewTApplicationException(thrift.INTERNAL_ERROR, "Internal error processing sendMessageToUserIdCollection: "+err.String())
+		oprot.WriteMessageBegin("sendMessageToUserIdCollection", thrift.EXCEPTION, seqId)
+		x.Write(oprot)
+		oprot.WriteMessageEnd()
+		oprot.Transport().Flush()
+		return
+	}
+	if err2 := oprot.WriteMessageBegin("sendMessageToUserIdCollection", thrift.REPLY, seqId); err2 != nil {
+		err = err2
+	}
+	if err2 := result.Write(oprot); err == nil && err2 != nil {
+		err = err2
+	}
+	if err2 := oprot.WriteMessageEnd(); err == nil && err2 != nil {
+		err = err2
+	}
+	if err2 := oprot.Transport().Flush(); err == nil && err2 != nil {
+		err = err2
+	}
+	if err != nil {
+		return
+	}
+	return true, err
 }
 
 type messageServiceProcessorGetUserOnlineStatus struct {
-  handler IMessageService
+	handler IMessageService
 }
 
 func (p *messageServiceProcessorGetUserOnlineStatus) Process(seqId int32, iprot, oprot thrift.TProtocol) (success bool, err thrift.TException) {
-  args := NewGetUserOnlineStatusArgs()
-  if err = args.Read(iprot); err != nil {
-    iprot.ReadMessageEnd()
-    x := thrift.NewTApplicationException(thrift.PROTOCOL_ERROR, err.String())
-    oprot.WriteMessageBegin("getUserOnlineStatus", thrift.EXCEPTION, seqId)
-    x.Write(oprot)
-    oprot.WriteMessageEnd()
-    oprot.Transport().Flush()
-    return
-  }
-  iprot.ReadMessageEnd()
-  result := NewGetUserOnlineStatusResult()
-  if result.Success, err = p.handler.GetUserOnlineStatus(args.UserIdCollection); err != nil {
-    x := thrift.NewTApplicationException(thrift.INTERNAL_ERROR, "Internal error processing getUserOnlineStatus: " + err.String())
-    oprot.WriteMessageBegin("getUserOnlineStatus", thrift.EXCEPTION, seqId)
-    x.Write(oprot)
-    oprot.WriteMessageEnd()
-    oprot.Transport().Flush()
-    return
-  }
-  if err2 := oprot.WriteMessageBegin("getUserOnlineStatus", thrift.REPLY, seqId); err2 != nil {
-    err = err2
-  }
-  if err2 := result.Write(oprot); err == nil && err2 != nil {
-    err = err2
-  }
-  if err2 := oprot.WriteMessageEnd(); err == nil && err2 != nil {
-    err = err2
-  }
-  if err2 := oprot.Transport().Flush(); err == nil && err2 != nil {
-    err = err2
-  }
-  if err != nil {
-    return
-  }
-  return true, err
+	args := NewGetUserOnlineStatusArgs()
+	if err = args.Read(iprot); err != nil {
+		iprot.ReadMessageEnd()
+		x := thrift.NewTApplicationException(thrift.PROTOCOL_ERROR, err.String())
+		oprot.WriteMessageBegin("getUserOnlineStatus", thrift.EXCEPTION, seqId)
+		x.Write(oprot)
+		oprot.WriteMessageEnd()
+		oprot.Transport().Flush()
+		return
+	}
+	iprot.ReadMessageEnd()
+	result := NewGetUserOnlineStatusResult()
+	if result.Success, err = p.handler.GetUserOnlineStatus(args.UserIdCollection); err != nil {
+		x := thrift.NewTApplicationException(thrift.INTERNAL_ERROR, "Internal error processing getUserOnlineStatus: "+err.String())
+		oprot.WriteMessageBegin("getUserOnlineStatus", thrift.EXCEPTION, seqId)
+		x.Write(oprot)
+		oprot.WriteMessageEnd()
+		oprot.Transport().Flush()
+		return
+	}
+	if err2 := oprot.WriteMessageBegin("getUserOnlineStatus", thrift.REPLY, seqId); err2 != nil {
+		err = err2
+	}
+	if err2 := result.Write(oprot); err == nil && err2 != nil {
+		err = err2
+	}
+	if err2 := oprot.WriteMessageEnd(); err == nil && err2 != nil {
+		err = err2
+	}
+	if err2 := oprot.Transport().Flush(); err == nil && err2 != nil {
+		err = err2
+	}
+	if err != nil {
+		return
+	}
+	return true, err
 }
 
 type messageServiceProcessorSendMessageWithOneOfflineMessage struct {
-  handler IMessageService
+	handler IMessageService
 }
 
 func (p *messageServiceProcessorSendMessageWithOneOfflineMessage) Process(seqId int32, iprot, oprot thrift.TProtocol) (success bool, err thrift.TException) {
-  args := NewSendMessageWithOneOfflineMessageArgs()
-  if err = args.Read(iprot); err != nil {
-    iprot.ReadMessageEnd()
-    x := thrift.NewTApplicationException(thrift.PROTOCOL_ERROR, err.String())
-    oprot.WriteMessageBegin("sendMessageWithOneOfflineMessage", thrift.EXCEPTION, seqId)
-    x.Write(oprot)
-    oprot.WriteMessageEnd()
-    oprot.Transport().Flush()
-    return
-  }
-  iprot.ReadMessageEnd()
-  result := NewSendMessageWithOneOfflineMessageResult()
-  if err = p.handler.SendMessageWithOneOfflineMessage(args.UserIdCollection, args.TypeA1, args.Message); err != nil {
-    x := thrift.NewTApplicationException(thrift.INTERNAL_ERROR, "Internal error processing sendMessageWithOneOfflineMessage: " + err.String())
-    oprot.WriteMessageBegin("sendMessageWithOneOfflineMessage", thrift.EXCEPTION, seqId)
-    x.Write(oprot)
-    oprot.WriteMessageEnd()
-    oprot.Transport().Flush()
-    return
-  }
-  if err2 := oprot.WriteMessageBegin("sendMessageWithOneOfflineMessage", thrift.REPLY, seqId); err2 != nil {
-    err = err2
-  }
-  if err2 := result.Write(oprot); err == nil && err2 != nil {
-    err = err2
-  }
-  if err2 := oprot.WriteMessageEnd(); err == nil && err2 != nil {
-    err = err2
-  }
-  if err2 := oprot.Transport().Flush(); err == nil && err2 != nil {
-    err = err2
-  }
-  if err != nil {
-    return
-  }
-  return true, err
+	args := NewSendMessageWithOneOfflineMessageArgs()
+	if err = args.Read(iprot); err != nil {
+		iprot.ReadMessageEnd()
+		x := thrift.NewTApplicationException(thrift.PROTOCOL_ERROR, err.String())
+		oprot.WriteMessageBegin("sendMessageWithOneOfflineMessage", thrift.EXCEPTION, seqId)
+		x.Write(oprot)
+		oprot.WriteMessageEnd()
+		oprot.Transport().Flush()
+		return
+	}
+	iprot.ReadMessageEnd()
+	result := NewSendMessageWithOneOfflineMessageResult()
+	if err = p.handler.SendMessageWithOneOfflineMessage(args.UserIdCollection, args.TypeA1, args.Message); err != nil {
+		x := thrift.NewTApplicationException(thrift.INTERNAL_ERROR, "Internal error processing sendMessageWithOneOfflineMessage: "+err.String())
+		oprot.WriteMessageBegin("sendMessageWithOneOfflineMessage", thrift.EXCEPTION, seqId)
+		x.Write(oprot)
+		oprot.WriteMessageEnd()
+		oprot.Transport().Flush()
+		return
+	}
+	if err2 := oprot.WriteMessageBegin("sendMessageWithOneOfflineMessage", thrift.REPLY, seqId); err2 != nil {
+		err = err2
+	}
+	if err2 := result.Write(oprot); err == nil && err2 != nil {
+		err = err2
+	}
+	if err2 := oprot.WriteMessageEnd(); err == nil && err2 != nil {
+		err = err2
+	}
+	if err2 := oprot.Transport().Flush(); err == nil && err2 != nil {
+		err = err2
+	}
+	if err != nil {
+		return
+	}
+	return true, err
 }
-
 
 // HELPER FUNCTIONS AND STRUCTURES
 
@@ -764,230 +769,279 @@ func (p *messageServiceProcessorSendMessageWithOneOfflineMessage) Process(seqId 
  *  - UserId
  */
 type OnlineArgs struct {
-  thrift.TStruct
-  UserId *UserId "userId"; // 1
+	thrift.TStruct
+	UserId *UserId "userId" // 1
 }
 
 func NewOnlineArgs() *OnlineArgs {
-  output := &OnlineArgs{
-    TStruct:thrift.NewTStruct("online_args", []thrift.TField{
-    thrift.NewTField("userId", thrift.STRUCT, 1),
-    }),
-  }
-  {
-  }
-  return output
+	output := &OnlineArgs{
+		TStruct: thrift.NewTStruct("online_args", []thrift.TField{
+			thrift.NewTField("userId", thrift.STRUCT, 1),
+		}),
+	}
+	{
+	}
+	return output
 }
 
 func (p *OnlineArgs) Read(iprot thrift.TProtocol) (err thrift.TProtocolException) {
-  _, err = iprot.ReadStructBegin()
-  if err != nil { return thrift.NewTProtocolExceptionReadStruct(p.ThriftName(), err); }
-  for {
-    fieldName, fieldTypeId, fieldId, err := iprot.ReadFieldBegin()
-    if fieldId < 0 {
-      fieldId = int16(p.FieldIdFromFieldName(fieldName))
-    } else if fieldName == "" {
-      fieldName = p.FieldNameFromFieldId(int(fieldId))
-    }
-    if fieldTypeId == thrift.GENERIC {
-      fieldTypeId = p.FieldFromFieldId(int(fieldId)).TypeId()
-    }
-    if err != nil {
-      return thrift.NewTProtocolExceptionReadField(int(fieldId), fieldName, p.ThriftName(), err)
-    }
-    if fieldTypeId == thrift.STOP { break; }
-    if fieldId == 1 || fieldName == "userId" {
-      if fieldTypeId == thrift.STRUCT {
-        err = p.ReadField1(iprot)
-        if err != nil { return thrift.NewTProtocolExceptionReadField(int(fieldId), fieldName, p.ThriftName(), err); }
-      } else if fieldTypeId == thrift.VOID {
-        err = iprot.Skip(fieldTypeId)
-        if err != nil { return thrift.NewTProtocolExceptionReadField(int(fieldId), fieldName, p.ThriftName(), err); }
-      } else {
-        err = p.ReadField1(iprot)
-        if err != nil { return thrift.NewTProtocolExceptionReadField(int(fieldId), fieldName, p.ThriftName(), err); }
-      }
-    } else {
-      err = iprot.Skip(fieldTypeId)
-      if err != nil { return thrift.NewTProtocolExceptionReadField(int(fieldId), fieldName, p.ThriftName(), err); }
-    }
-    err = iprot.ReadFieldEnd()
-    if err != nil { return thrift.NewTProtocolExceptionReadField(int(fieldId), fieldName, p.ThriftName(), err); }
-  }
-  err = iprot.ReadStructEnd()
-  if err != nil { return thrift.NewTProtocolExceptionReadStruct(p.ThriftName(), err); }
-  return err
+	_, err = iprot.ReadStructBegin()
+	if err != nil {
+		return thrift.NewTProtocolExceptionReadStruct(p.ThriftName(), err)
+	}
+	for {
+		fieldName, fieldTypeId, fieldId, err := iprot.ReadFieldBegin()
+		if fieldId < 0 {
+			fieldId = int16(p.FieldIdFromFieldName(fieldName))
+		} else if fieldName == "" {
+			fieldName = p.FieldNameFromFieldId(int(fieldId))
+		}
+		if fieldTypeId == thrift.GENERIC {
+			fieldTypeId = p.FieldFromFieldId(int(fieldId)).TypeId()
+		}
+		if err != nil {
+			return thrift.NewTProtocolExceptionReadField(int(fieldId), fieldName, p.ThriftName(), err)
+		}
+		if fieldTypeId == thrift.STOP {
+			break
+		}
+		if fieldId == 1 || fieldName == "userId" {
+			if fieldTypeId == thrift.STRUCT {
+				err = p.ReadField1(iprot)
+				if err != nil {
+					return thrift.NewTProtocolExceptionReadField(int(fieldId), fieldName, p.ThriftName(), err)
+				}
+			} else if fieldTypeId == thrift.VOID {
+				err = iprot.Skip(fieldTypeId)
+				if err != nil {
+					return thrift.NewTProtocolExceptionReadField(int(fieldId), fieldName, p.ThriftName(), err)
+				}
+			} else {
+				err = p.ReadField1(iprot)
+				if err != nil {
+					return thrift.NewTProtocolExceptionReadField(int(fieldId), fieldName, p.ThriftName(), err)
+				}
+			}
+		} else {
+			err = iprot.Skip(fieldTypeId)
+			if err != nil {
+				return thrift.NewTProtocolExceptionReadField(int(fieldId), fieldName, p.ThriftName(), err)
+			}
+		}
+		err = iprot.ReadFieldEnd()
+		if err != nil {
+			return thrift.NewTProtocolExceptionReadField(int(fieldId), fieldName, p.ThriftName(), err)
+		}
+	}
+	err = iprot.ReadStructEnd()
+	if err != nil {
+		return thrift.NewTProtocolExceptionReadStruct(p.ThriftName(), err)
+	}
+	return err
 }
 
 func (p *OnlineArgs) ReadField1(iprot thrift.TProtocol) (err thrift.TProtocolException) {
-  p.UserId = NewUserId()
-  err62 := p.UserId.Read(iprot)
-  if err62 != nil { return thrift.NewTProtocolExceptionReadStruct("p.UserIdUserId", err62); }
-  return err
+	p.UserId = NewUserId()
+	err62 := p.UserId.Read(iprot)
+	if err62 != nil {
+		return thrift.NewTProtocolExceptionReadStruct("p.UserIdUserId", err62)
+	}
+	return err
 }
 
-func (p *OnlineArgs) ReadFieldUserId(iprot thrift.TProtocol) (thrift.TProtocolException) {
-  return p.ReadField1(iprot)
+func (p *OnlineArgs) ReadFieldUserId(iprot thrift.TProtocol) thrift.TProtocolException {
+	return p.ReadField1(iprot)
 }
 
 func (p *OnlineArgs) Write(oprot thrift.TProtocol) (err thrift.TProtocolException) {
-  err = oprot.WriteStructBegin("online_args")
-  if err != nil { return thrift.NewTProtocolExceptionWriteStruct(p.ThriftName(), err); }
-  err = p.WriteField1(oprot)
-  if err != nil { return err }
-  err = oprot.WriteFieldStop()
-  if err != nil { return thrift.NewTProtocolExceptionWriteField(-1, "STOP", p.ThriftName(), err); }
-  err = oprot.WriteStructEnd()
-  if err != nil { return thrift.NewTProtocolExceptionWriteStruct(p.ThriftName(), err); }
-  return err
+	err = oprot.WriteStructBegin("online_args")
+	if err != nil {
+		return thrift.NewTProtocolExceptionWriteStruct(p.ThriftName(), err)
+	}
+	err = p.WriteField1(oprot)
+	if err != nil {
+		return err
+	}
+	err = oprot.WriteFieldStop()
+	if err != nil {
+		return thrift.NewTProtocolExceptionWriteField(-1, "STOP", p.ThriftName(), err)
+	}
+	err = oprot.WriteStructEnd()
+	if err != nil {
+		return thrift.NewTProtocolExceptionWriteStruct(p.ThriftName(), err)
+	}
+	return err
 }
 
 func (p *OnlineArgs) WriteField1(oprot thrift.TProtocol) (err thrift.TProtocolException) {
-  if p.UserId != nil {
-    err = oprot.WriteFieldBegin("userId", thrift.STRUCT, 1)
-    if err != nil { return thrift.NewTProtocolExceptionWriteField(1, "userId", p.ThriftName(), err); }
-    err = p.UserId.Write(oprot)
-    if err != nil { return thrift.NewTProtocolExceptionWriteStruct("UserId", err); }
-    err = oprot.WriteFieldEnd()
-    if err != nil { return thrift.NewTProtocolExceptionWriteField(1, "userId", p.ThriftName(), err); }
-  }
-  return err
+	if p.UserId != nil {
+		err = oprot.WriteFieldBegin("userId", thrift.STRUCT, 1)
+		if err != nil {
+			return thrift.NewTProtocolExceptionWriteField(1, "userId", p.ThriftName(), err)
+		}
+		err = p.UserId.Write(oprot)
+		if err != nil {
+			return thrift.NewTProtocolExceptionWriteStruct("UserId", err)
+		}
+		err = oprot.WriteFieldEnd()
+		if err != nil {
+			return thrift.NewTProtocolExceptionWriteField(1, "userId", p.ThriftName(), err)
+		}
+	}
+	return err
 }
 
-func (p *OnlineArgs) WriteFieldUserId(oprot thrift.TProtocol) (thrift.TProtocolException) {
-  return p.WriteField1(oprot)
+func (p *OnlineArgs) WriteFieldUserId(oprot thrift.TProtocol) thrift.TProtocolException {
+	return p.WriteField1(oprot)
 }
 
 func (p *OnlineArgs) TStructName() string {
-  return "OnlineArgs"
+	return "OnlineArgs"
 }
 
 func (p *OnlineArgs) ThriftName() string {
-  return "online_args"
+	return "online_args"
 }
 
 func (p *OnlineArgs) String() string {
-  if p == nil {
-    return "<nil>"
-  }
-  return fmt.Sprintf("OnlineArgs(%+v)", *p)
+	if p == nil {
+		return "<nil>"
+	}
+	return fmt.Sprintf("OnlineArgs(%+v)", *p)
 }
 
 func (p *OnlineArgs) CompareTo(other interface{}) (int, bool) {
-  if other == nil {
-    return 1, true
-  }
-  data, ok := other.(*OnlineArgs)
-  if !ok {
-    return 0, false
-  }
-  if cmp, ok := p.UserId.CompareTo(data.UserId); !ok || cmp != 0 {
-    return cmp, ok
-  }
-  return 0, true
+	if other == nil {
+		return 1, true
+	}
+	data, ok := other.(*OnlineArgs)
+	if !ok {
+		return 0, false
+	}
+	if cmp, ok := p.UserId.CompareTo(data.UserId); !ok || cmp != 0 {
+		return cmp, ok
+	}
+	return 0, true
 }
 
 func (p *OnlineArgs) AttributeByFieldId(id int) interface{} {
-  switch id {
-  default: return nil
-  case 1: return p.UserId
-  }
-  return nil
+	switch id {
+	default:
+		return nil
+	case 1:
+		return p.UserId
+	}
+	return nil
 }
 
 func (p *OnlineArgs) TStructFields() thrift.TFieldContainer {
-  return thrift.NewTFieldContainer([]thrift.TField{
-    thrift.NewTField("userId", thrift.STRUCT, 1),
-    })
+	return thrift.NewTFieldContainer([]thrift.TField{
+		thrift.NewTField("userId", thrift.STRUCT, 1),
+	})
 }
 
 type OnlineResult struct {
-  thrift.TStruct
+	thrift.TStruct
 }
 
 func NewOnlineResult() *OnlineResult {
-  output := &OnlineResult{
-    TStruct:thrift.NewTStruct("online_result", []thrift.TField{
-    }),
-  }
-  {
-  }
-  return output
+	output := &OnlineResult{
+		TStruct: thrift.NewTStruct("online_result", []thrift.TField{}),
+	}
+	{
+	}
+	return output
 }
 
 func (p *OnlineResult) Read(iprot thrift.TProtocol) (err thrift.TProtocolException) {
-  _, err = iprot.ReadStructBegin()
-  if err != nil { return thrift.NewTProtocolExceptionReadStruct(p.ThriftName(), err); }
-  for {
-    fieldName, fieldTypeId, fieldId, err := iprot.ReadFieldBegin()
-    if fieldId < 0 {
-      fieldId = int16(p.FieldIdFromFieldName(fieldName))
-    } else if fieldName == "" {
-      fieldName = p.FieldNameFromFieldId(int(fieldId))
-    }
-    if fieldTypeId == thrift.GENERIC {
-      fieldTypeId = p.FieldFromFieldId(int(fieldId)).TypeId()
-    }
-    if err != nil {
-      return thrift.NewTProtocolExceptionReadField(int(fieldId), fieldName, p.ThriftName(), err)
-    }
-    if fieldTypeId == thrift.STOP { break; }
-    err = iprot.Skip(fieldTypeId)
-    if err != nil { return thrift.NewTProtocolExceptionReadField(int(fieldId), fieldName, p.ThriftName(), err); }
-    err = iprot.ReadFieldEnd()
-    if err != nil { return thrift.NewTProtocolExceptionReadField(int(fieldId), fieldName, p.ThriftName(), err); }
-  }
-  err = iprot.ReadStructEnd()
-  if err != nil { return thrift.NewTProtocolExceptionReadStruct(p.ThriftName(), err); }
-  return err
+	_, err = iprot.ReadStructBegin()
+	if err != nil {
+		return thrift.NewTProtocolExceptionReadStruct(p.ThriftName(), err)
+	}
+	for {
+		fieldName, fieldTypeId, fieldId, err := iprot.ReadFieldBegin()
+		if fieldId < 0 {
+			fieldId = int16(p.FieldIdFromFieldName(fieldName))
+		} else if fieldName == "" {
+			fieldName = p.FieldNameFromFieldId(int(fieldId))
+		}
+		if fieldTypeId == thrift.GENERIC {
+			fieldTypeId = p.FieldFromFieldId(int(fieldId)).TypeId()
+		}
+		if err != nil {
+			return thrift.NewTProtocolExceptionReadField(int(fieldId), fieldName, p.ThriftName(), err)
+		}
+		if fieldTypeId == thrift.STOP {
+			break
+		}
+		err = iprot.Skip(fieldTypeId)
+		if err != nil {
+			return thrift.NewTProtocolExceptionReadField(int(fieldId), fieldName, p.ThriftName(), err)
+		}
+		err = iprot.ReadFieldEnd()
+		if err != nil {
+			return thrift.NewTProtocolExceptionReadField(int(fieldId), fieldName, p.ThriftName(), err)
+		}
+	}
+	err = iprot.ReadStructEnd()
+	if err != nil {
+		return thrift.NewTProtocolExceptionReadStruct(p.ThriftName(), err)
+	}
+	return err
 }
 
 func (p *OnlineResult) Write(oprot thrift.TProtocol) (err thrift.TProtocolException) {
-  err = oprot.WriteStructBegin("online_result")
-  if err != nil { return thrift.NewTProtocolExceptionWriteStruct(p.ThriftName(), err); }
-  err = oprot.WriteFieldStop()
-  if err != nil { return thrift.NewTProtocolExceptionWriteField(-1, "STOP", p.ThriftName(), err); }
-  err = oprot.WriteStructEnd()
-  if err != nil { return thrift.NewTProtocolExceptionWriteStruct(p.ThriftName(), err); }
-  return err
+	err = oprot.WriteStructBegin("online_result")
+	if err != nil {
+		return thrift.NewTProtocolExceptionWriteStruct(p.ThriftName(), err)
+	}
+	err = oprot.WriteFieldStop()
+	if err != nil {
+		return thrift.NewTProtocolExceptionWriteField(-1, "STOP", p.ThriftName(), err)
+	}
+	err = oprot.WriteStructEnd()
+	if err != nil {
+		return thrift.NewTProtocolExceptionWriteStruct(p.ThriftName(), err)
+	}
+	return err
 }
 
 func (p *OnlineResult) TStructName() string {
-  return "OnlineResult"
+	return "OnlineResult"
 }
 
 func (p *OnlineResult) ThriftName() string {
-  return "online_result"
+	return "online_result"
 }
 
 func (p *OnlineResult) String() string {
-  if p == nil {
-    return "<nil>"
-  }
-  return fmt.Sprintf("OnlineResult(%+v)", *p)
+	if p == nil {
+		return "<nil>"
+	}
+	return fmt.Sprintf("OnlineResult(%+v)", *p)
 }
 
 func (p *OnlineResult) CompareTo(other interface{}) (int, bool) {
-  if other == nil {
-    return 1, true
-  }
-  _, ok := other.(*OnlineResult)
-  if !ok {
-    return 0, false
-  }
-  return 0, true
+	if other == nil {
+		return 1, true
+	}
+	_, ok := other.(*OnlineResult)
+	if !ok {
+		return 0, false
+	}
+	return 0, true
 }
 
 func (p *OnlineResult) AttributeByFieldId(id int) interface{} {
-  switch id {
-  default: return nil
-  }
-  return nil
+	switch id {
+	default:
+		return nil
+	}
+	return nil
 }
 
 func (p *OnlineResult) TStructFields() thrift.TFieldContainer {
-  return thrift.NewTFieldContainer([]thrift.TField{
-    })
+	return thrift.NewTFieldContainer([]thrift.TField{})
 }
 
 /**
@@ -995,230 +1049,279 @@ func (p *OnlineResult) TStructFields() thrift.TFieldContainer {
  *  - UserId
  */
 type OfflineArgs struct {
-  thrift.TStruct
-  UserId *UserId "userId"; // 1
+	thrift.TStruct
+	UserId *UserId "userId" // 1
 }
 
 func NewOfflineArgs() *OfflineArgs {
-  output := &OfflineArgs{
-    TStruct:thrift.NewTStruct("offline_args", []thrift.TField{
-    thrift.NewTField("userId", thrift.STRUCT, 1),
-    }),
-  }
-  {
-  }
-  return output
+	output := &OfflineArgs{
+		TStruct: thrift.NewTStruct("offline_args", []thrift.TField{
+			thrift.NewTField("userId", thrift.STRUCT, 1),
+		}),
+	}
+	{
+	}
+	return output
 }
 
 func (p *OfflineArgs) Read(iprot thrift.TProtocol) (err thrift.TProtocolException) {
-  _, err = iprot.ReadStructBegin()
-  if err != nil { return thrift.NewTProtocolExceptionReadStruct(p.ThriftName(), err); }
-  for {
-    fieldName, fieldTypeId, fieldId, err := iprot.ReadFieldBegin()
-    if fieldId < 0 {
-      fieldId = int16(p.FieldIdFromFieldName(fieldName))
-    } else if fieldName == "" {
-      fieldName = p.FieldNameFromFieldId(int(fieldId))
-    }
-    if fieldTypeId == thrift.GENERIC {
-      fieldTypeId = p.FieldFromFieldId(int(fieldId)).TypeId()
-    }
-    if err != nil {
-      return thrift.NewTProtocolExceptionReadField(int(fieldId), fieldName, p.ThriftName(), err)
-    }
-    if fieldTypeId == thrift.STOP { break; }
-    if fieldId == 1 || fieldName == "userId" {
-      if fieldTypeId == thrift.STRUCT {
-        err = p.ReadField1(iprot)
-        if err != nil { return thrift.NewTProtocolExceptionReadField(int(fieldId), fieldName, p.ThriftName(), err); }
-      } else if fieldTypeId == thrift.VOID {
-        err = iprot.Skip(fieldTypeId)
-        if err != nil { return thrift.NewTProtocolExceptionReadField(int(fieldId), fieldName, p.ThriftName(), err); }
-      } else {
-        err = p.ReadField1(iprot)
-        if err != nil { return thrift.NewTProtocolExceptionReadField(int(fieldId), fieldName, p.ThriftName(), err); }
-      }
-    } else {
-      err = iprot.Skip(fieldTypeId)
-      if err != nil { return thrift.NewTProtocolExceptionReadField(int(fieldId), fieldName, p.ThriftName(), err); }
-    }
-    err = iprot.ReadFieldEnd()
-    if err != nil { return thrift.NewTProtocolExceptionReadField(int(fieldId), fieldName, p.ThriftName(), err); }
-  }
-  err = iprot.ReadStructEnd()
-  if err != nil { return thrift.NewTProtocolExceptionReadStruct(p.ThriftName(), err); }
-  return err
+	_, err = iprot.ReadStructBegin()
+	if err != nil {
+		return thrift.NewTProtocolExceptionReadStruct(p.ThriftName(), err)
+	}
+	for {
+		fieldName, fieldTypeId, fieldId, err := iprot.ReadFieldBegin()
+		if fieldId < 0 {
+			fieldId = int16(p.FieldIdFromFieldName(fieldName))
+		} else if fieldName == "" {
+			fieldName = p.FieldNameFromFieldId(int(fieldId))
+		}
+		if fieldTypeId == thrift.GENERIC {
+			fieldTypeId = p.FieldFromFieldId(int(fieldId)).TypeId()
+		}
+		if err != nil {
+			return thrift.NewTProtocolExceptionReadField(int(fieldId), fieldName, p.ThriftName(), err)
+		}
+		if fieldTypeId == thrift.STOP {
+			break
+		}
+		if fieldId == 1 || fieldName == "userId" {
+			if fieldTypeId == thrift.STRUCT {
+				err = p.ReadField1(iprot)
+				if err != nil {
+					return thrift.NewTProtocolExceptionReadField(int(fieldId), fieldName, p.ThriftName(), err)
+				}
+			} else if fieldTypeId == thrift.VOID {
+				err = iprot.Skip(fieldTypeId)
+				if err != nil {
+					return thrift.NewTProtocolExceptionReadField(int(fieldId), fieldName, p.ThriftName(), err)
+				}
+			} else {
+				err = p.ReadField1(iprot)
+				if err != nil {
+					return thrift.NewTProtocolExceptionReadField(int(fieldId), fieldName, p.ThriftName(), err)
+				}
+			}
+		} else {
+			err = iprot.Skip(fieldTypeId)
+			if err != nil {
+				return thrift.NewTProtocolExceptionReadField(int(fieldId), fieldName, p.ThriftName(), err)
+			}
+		}
+		err = iprot.ReadFieldEnd()
+		if err != nil {
+			return thrift.NewTProtocolExceptionReadField(int(fieldId), fieldName, p.ThriftName(), err)
+		}
+	}
+	err = iprot.ReadStructEnd()
+	if err != nil {
+		return thrift.NewTProtocolExceptionReadStruct(p.ThriftName(), err)
+	}
+	return err
 }
 
 func (p *OfflineArgs) ReadField1(iprot thrift.TProtocol) (err thrift.TProtocolException) {
-  p.UserId = NewUserId()
-  err65 := p.UserId.Read(iprot)
-  if err65 != nil { return thrift.NewTProtocolExceptionReadStruct("p.UserIdUserId", err65); }
-  return err
+	p.UserId = NewUserId()
+	err65 := p.UserId.Read(iprot)
+	if err65 != nil {
+		return thrift.NewTProtocolExceptionReadStruct("p.UserIdUserId", err65)
+	}
+	return err
 }
 
-func (p *OfflineArgs) ReadFieldUserId(iprot thrift.TProtocol) (thrift.TProtocolException) {
-  return p.ReadField1(iprot)
+func (p *OfflineArgs) ReadFieldUserId(iprot thrift.TProtocol) thrift.TProtocolException {
+	return p.ReadField1(iprot)
 }
 
 func (p *OfflineArgs) Write(oprot thrift.TProtocol) (err thrift.TProtocolException) {
-  err = oprot.WriteStructBegin("offline_args")
-  if err != nil { return thrift.NewTProtocolExceptionWriteStruct(p.ThriftName(), err); }
-  err = p.WriteField1(oprot)
-  if err != nil { return err }
-  err = oprot.WriteFieldStop()
-  if err != nil { return thrift.NewTProtocolExceptionWriteField(-1, "STOP", p.ThriftName(), err); }
-  err = oprot.WriteStructEnd()
-  if err != nil { return thrift.NewTProtocolExceptionWriteStruct(p.ThriftName(), err); }
-  return err
+	err = oprot.WriteStructBegin("offline_args")
+	if err != nil {
+		return thrift.NewTProtocolExceptionWriteStruct(p.ThriftName(), err)
+	}
+	err = p.WriteField1(oprot)
+	if err != nil {
+		return err
+	}
+	err = oprot.WriteFieldStop()
+	if err != nil {
+		return thrift.NewTProtocolExceptionWriteField(-1, "STOP", p.ThriftName(), err)
+	}
+	err = oprot.WriteStructEnd()
+	if err != nil {
+		return thrift.NewTProtocolExceptionWriteStruct(p.ThriftName(), err)
+	}
+	return err
 }
 
 func (p *OfflineArgs) WriteField1(oprot thrift.TProtocol) (err thrift.TProtocolException) {
-  if p.UserId != nil {
-    err = oprot.WriteFieldBegin("userId", thrift.STRUCT, 1)
-    if err != nil { return thrift.NewTProtocolExceptionWriteField(1, "userId", p.ThriftName(), err); }
-    err = p.UserId.Write(oprot)
-    if err != nil { return thrift.NewTProtocolExceptionWriteStruct("UserId", err); }
-    err = oprot.WriteFieldEnd()
-    if err != nil { return thrift.NewTProtocolExceptionWriteField(1, "userId", p.ThriftName(), err); }
-  }
-  return err
+	if p.UserId != nil {
+		err = oprot.WriteFieldBegin("userId", thrift.STRUCT, 1)
+		if err != nil {
+			return thrift.NewTProtocolExceptionWriteField(1, "userId", p.ThriftName(), err)
+		}
+		err = p.UserId.Write(oprot)
+		if err != nil {
+			return thrift.NewTProtocolExceptionWriteStruct("UserId", err)
+		}
+		err = oprot.WriteFieldEnd()
+		if err != nil {
+			return thrift.NewTProtocolExceptionWriteField(1, "userId", p.ThriftName(), err)
+		}
+	}
+	return err
 }
 
-func (p *OfflineArgs) WriteFieldUserId(oprot thrift.TProtocol) (thrift.TProtocolException) {
-  return p.WriteField1(oprot)
+func (p *OfflineArgs) WriteFieldUserId(oprot thrift.TProtocol) thrift.TProtocolException {
+	return p.WriteField1(oprot)
 }
 
 func (p *OfflineArgs) TStructName() string {
-  return "OfflineArgs"
+	return "OfflineArgs"
 }
 
 func (p *OfflineArgs) ThriftName() string {
-  return "offline_args"
+	return "offline_args"
 }
 
 func (p *OfflineArgs) String() string {
-  if p == nil {
-    return "<nil>"
-  }
-  return fmt.Sprintf("OfflineArgs(%+v)", *p)
+	if p == nil {
+		return "<nil>"
+	}
+	return fmt.Sprintf("OfflineArgs(%+v)", *p)
 }
 
 func (p *OfflineArgs) CompareTo(other interface{}) (int, bool) {
-  if other == nil {
-    return 1, true
-  }
-  data, ok := other.(*OfflineArgs)
-  if !ok {
-    return 0, false
-  }
-  if cmp, ok := p.UserId.CompareTo(data.UserId); !ok || cmp != 0 {
-    return cmp, ok
-  }
-  return 0, true
+	if other == nil {
+		return 1, true
+	}
+	data, ok := other.(*OfflineArgs)
+	if !ok {
+		return 0, false
+	}
+	if cmp, ok := p.UserId.CompareTo(data.UserId); !ok || cmp != 0 {
+		return cmp, ok
+	}
+	return 0, true
 }
 
 func (p *OfflineArgs) AttributeByFieldId(id int) interface{} {
-  switch id {
-  default: return nil
-  case 1: return p.UserId
-  }
-  return nil
+	switch id {
+	default:
+		return nil
+	case 1:
+		return p.UserId
+	}
+	return nil
 }
 
 func (p *OfflineArgs) TStructFields() thrift.TFieldContainer {
-  return thrift.NewTFieldContainer([]thrift.TField{
-    thrift.NewTField("userId", thrift.STRUCT, 1),
-    })
+	return thrift.NewTFieldContainer([]thrift.TField{
+		thrift.NewTField("userId", thrift.STRUCT, 1),
+	})
 }
 
 type OfflineResult struct {
-  thrift.TStruct
+	thrift.TStruct
 }
 
 func NewOfflineResult() *OfflineResult {
-  output := &OfflineResult{
-    TStruct:thrift.NewTStruct("offline_result", []thrift.TField{
-    }),
-  }
-  {
-  }
-  return output
+	output := &OfflineResult{
+		TStruct: thrift.NewTStruct("offline_result", []thrift.TField{}),
+	}
+	{
+	}
+	return output
 }
 
 func (p *OfflineResult) Read(iprot thrift.TProtocol) (err thrift.TProtocolException) {
-  _, err = iprot.ReadStructBegin()
-  if err != nil { return thrift.NewTProtocolExceptionReadStruct(p.ThriftName(), err); }
-  for {
-    fieldName, fieldTypeId, fieldId, err := iprot.ReadFieldBegin()
-    if fieldId < 0 {
-      fieldId = int16(p.FieldIdFromFieldName(fieldName))
-    } else if fieldName == "" {
-      fieldName = p.FieldNameFromFieldId(int(fieldId))
-    }
-    if fieldTypeId == thrift.GENERIC {
-      fieldTypeId = p.FieldFromFieldId(int(fieldId)).TypeId()
-    }
-    if err != nil {
-      return thrift.NewTProtocolExceptionReadField(int(fieldId), fieldName, p.ThriftName(), err)
-    }
-    if fieldTypeId == thrift.STOP { break; }
-    err = iprot.Skip(fieldTypeId)
-    if err != nil { return thrift.NewTProtocolExceptionReadField(int(fieldId), fieldName, p.ThriftName(), err); }
-    err = iprot.ReadFieldEnd()
-    if err != nil { return thrift.NewTProtocolExceptionReadField(int(fieldId), fieldName, p.ThriftName(), err); }
-  }
-  err = iprot.ReadStructEnd()
-  if err != nil { return thrift.NewTProtocolExceptionReadStruct(p.ThriftName(), err); }
-  return err
+	_, err = iprot.ReadStructBegin()
+	if err != nil {
+		return thrift.NewTProtocolExceptionReadStruct(p.ThriftName(), err)
+	}
+	for {
+		fieldName, fieldTypeId, fieldId, err := iprot.ReadFieldBegin()
+		if fieldId < 0 {
+			fieldId = int16(p.FieldIdFromFieldName(fieldName))
+		} else if fieldName == "" {
+			fieldName = p.FieldNameFromFieldId(int(fieldId))
+		}
+		if fieldTypeId == thrift.GENERIC {
+			fieldTypeId = p.FieldFromFieldId(int(fieldId)).TypeId()
+		}
+		if err != nil {
+			return thrift.NewTProtocolExceptionReadField(int(fieldId), fieldName, p.ThriftName(), err)
+		}
+		if fieldTypeId == thrift.STOP {
+			break
+		}
+		err = iprot.Skip(fieldTypeId)
+		if err != nil {
+			return thrift.NewTProtocolExceptionReadField(int(fieldId), fieldName, p.ThriftName(), err)
+		}
+		err = iprot.ReadFieldEnd()
+		if err != nil {
+			return thrift.NewTProtocolExceptionReadField(int(fieldId), fieldName, p.ThriftName(), err)
+		}
+	}
+	err = iprot.ReadStructEnd()
+	if err != nil {
+		return thrift.NewTProtocolExceptionReadStruct(p.ThriftName(), err)
+	}
+	return err
 }
 
 func (p *OfflineResult) Write(oprot thrift.TProtocol) (err thrift.TProtocolException) {
-  err = oprot.WriteStructBegin("offline_result")
-  if err != nil { return thrift.NewTProtocolExceptionWriteStruct(p.ThriftName(), err); }
-  err = oprot.WriteFieldStop()
-  if err != nil { return thrift.NewTProtocolExceptionWriteField(-1, "STOP", p.ThriftName(), err); }
-  err = oprot.WriteStructEnd()
-  if err != nil { return thrift.NewTProtocolExceptionWriteStruct(p.ThriftName(), err); }
-  return err
+	err = oprot.WriteStructBegin("offline_result")
+	if err != nil {
+		return thrift.NewTProtocolExceptionWriteStruct(p.ThriftName(), err)
+	}
+	err = oprot.WriteFieldStop()
+	if err != nil {
+		return thrift.NewTProtocolExceptionWriteField(-1, "STOP", p.ThriftName(), err)
+	}
+	err = oprot.WriteStructEnd()
+	if err != nil {
+		return thrift.NewTProtocolExceptionWriteStruct(p.ThriftName(), err)
+	}
+	return err
 }
 
 func (p *OfflineResult) TStructName() string {
-  return "OfflineResult"
+	return "OfflineResult"
 }
 
 func (p *OfflineResult) ThriftName() string {
-  return "offline_result"
+	return "offline_result"
 }
 
 func (p *OfflineResult) String() string {
-  if p == nil {
-    return "<nil>"
-  }
-  return fmt.Sprintf("OfflineResult(%+v)", *p)
+	if p == nil {
+		return "<nil>"
+	}
+	return fmt.Sprintf("OfflineResult(%+v)", *p)
 }
 
 func (p *OfflineResult) CompareTo(other interface{}) (int, bool) {
-  if other == nil {
-    return 1, true
-  }
-  _, ok := other.(*OfflineResult)
-  if !ok {
-    return 0, false
-  }
-  return 0, true
+	if other == nil {
+		return 1, true
+	}
+	_, ok := other.(*OfflineResult)
+	if !ok {
+		return 0, false
+	}
+	return 0, true
 }
 
 func (p *OfflineResult) AttributeByFieldId(id int) interface{} {
-  switch id {
-  default: return nil
-  }
-  return nil
+	switch id {
+	default:
+		return nil
+	}
+	return nil
 }
 
 func (p *OfflineResult) TStructFields() thrift.TFieldContainer {
-  return thrift.NewTFieldContainer([]thrift.TField{
-    })
+	return thrift.NewTFieldContainer([]thrift.TField{})
 }
 
 /**
@@ -1228,325 +1331,408 @@ func (p *OfflineResult) TStructFields() thrift.TFieldContainer {
  *  - Message
  */
 type SendMessageArgs struct {
-  thrift.TStruct
-  UserId *UserId "userId"; // 1
-  TypeA1 string "type"; // 2
-  Message *Message "message"; // 3
+	thrift.TStruct
+	UserId  *UserId  "userId"  // 1
+	TypeA1  string   "type"    // 2
+	Message *Message "message" // 3
 }
 
 func NewSendMessageArgs() *SendMessageArgs {
-  output := &SendMessageArgs{
-    TStruct:thrift.NewTStruct("sendMessage_args", []thrift.TField{
-    thrift.NewTField("userId", thrift.STRUCT, 1),
-    thrift.NewTField("type", thrift.STRING, 2),
-    thrift.NewTField("message", thrift.STRUCT, 3),
-    }),
-  }
-  {
-  }
-  return output
+	output := &SendMessageArgs{
+		TStruct: thrift.NewTStruct("sendMessage_args", []thrift.TField{
+			thrift.NewTField("userId", thrift.STRUCT, 1),
+			thrift.NewTField("type", thrift.STRING, 2),
+			thrift.NewTField("message", thrift.STRUCT, 3),
+		}),
+	}
+	{
+	}
+	return output
 }
 
 func (p *SendMessageArgs) Read(iprot thrift.TProtocol) (err thrift.TProtocolException) {
-  _, err = iprot.ReadStructBegin()
-  if err != nil { return thrift.NewTProtocolExceptionReadStruct(p.ThriftName(), err); }
-  for {
-    fieldName, fieldTypeId, fieldId, err := iprot.ReadFieldBegin()
-    if fieldId < 0 {
-      fieldId = int16(p.FieldIdFromFieldName(fieldName))
-    } else if fieldName == "" {
-      fieldName = p.FieldNameFromFieldId(int(fieldId))
-    }
-    if fieldTypeId == thrift.GENERIC {
-      fieldTypeId = p.FieldFromFieldId(int(fieldId)).TypeId()
-    }
-    if err != nil {
-      return thrift.NewTProtocolExceptionReadField(int(fieldId), fieldName, p.ThriftName(), err)
-    }
-    if fieldTypeId == thrift.STOP { break; }
-    if fieldId == 1 || fieldName == "userId" {
-      if fieldTypeId == thrift.STRUCT {
-        err = p.ReadField1(iprot)
-        if err != nil { return thrift.NewTProtocolExceptionReadField(int(fieldId), fieldName, p.ThriftName(), err); }
-      } else if fieldTypeId == thrift.VOID {
-        err = iprot.Skip(fieldTypeId)
-        if err != nil { return thrift.NewTProtocolExceptionReadField(int(fieldId), fieldName, p.ThriftName(), err); }
-      } else {
-        err = p.ReadField1(iprot)
-        if err != nil { return thrift.NewTProtocolExceptionReadField(int(fieldId), fieldName, p.ThriftName(), err); }
-      }
-    } else if fieldId == 2 || fieldName == "type" {
-      if fieldTypeId == thrift.STRING {
-        err = p.ReadField2(iprot)
-        if err != nil { return thrift.NewTProtocolExceptionReadField(int(fieldId), fieldName, p.ThriftName(), err); }
-      } else if fieldTypeId == thrift.VOID {
-        err = iprot.Skip(fieldTypeId)
-        if err != nil { return thrift.NewTProtocolExceptionReadField(int(fieldId), fieldName, p.ThriftName(), err); }
-      } else {
-        err = p.ReadField2(iprot)
-        if err != nil { return thrift.NewTProtocolExceptionReadField(int(fieldId), fieldName, p.ThriftName(), err); }
-      }
-    } else if fieldId == 3 || fieldName == "message" {
-      if fieldTypeId == thrift.STRUCT {
-        err = p.ReadField3(iprot)
-        if err != nil { return thrift.NewTProtocolExceptionReadField(int(fieldId), fieldName, p.ThriftName(), err); }
-      } else if fieldTypeId == thrift.VOID {
-        err = iprot.Skip(fieldTypeId)
-        if err != nil { return thrift.NewTProtocolExceptionReadField(int(fieldId), fieldName, p.ThriftName(), err); }
-      } else {
-        err = p.ReadField3(iprot)
-        if err != nil { return thrift.NewTProtocolExceptionReadField(int(fieldId), fieldName, p.ThriftName(), err); }
-      }
-    } else {
-      err = iprot.Skip(fieldTypeId)
-      if err != nil { return thrift.NewTProtocolExceptionReadField(int(fieldId), fieldName, p.ThriftName(), err); }
-    }
-    err = iprot.ReadFieldEnd()
-    if err != nil { return thrift.NewTProtocolExceptionReadField(int(fieldId), fieldName, p.ThriftName(), err); }
-  }
-  err = iprot.ReadStructEnd()
-  if err != nil { return thrift.NewTProtocolExceptionReadStruct(p.ThriftName(), err); }
-  return err
+	_, err = iprot.ReadStructBegin()
+	if err != nil {
+		return thrift.NewTProtocolExceptionReadStruct(p.ThriftName(), err)
+	}
+	for {
+		fieldName, fieldTypeId, fieldId, err := iprot.ReadFieldBegin()
+		if fieldId < 0 {
+			fieldId = int16(p.FieldIdFromFieldName(fieldName))
+		} else if fieldName == "" {
+			fieldName = p.FieldNameFromFieldId(int(fieldId))
+		}
+		if fieldTypeId == thrift.GENERIC {
+			fieldTypeId = p.FieldFromFieldId(int(fieldId)).TypeId()
+		}
+		if err != nil {
+			return thrift.NewTProtocolExceptionReadField(int(fieldId), fieldName, p.ThriftName(), err)
+		}
+		if fieldTypeId == thrift.STOP {
+			break
+		}
+		if fieldId == 1 || fieldName == "userId" {
+			if fieldTypeId == thrift.STRUCT {
+				err = p.ReadField1(iprot)
+				if err != nil {
+					return thrift.NewTProtocolExceptionReadField(int(fieldId), fieldName, p.ThriftName(), err)
+				}
+			} else if fieldTypeId == thrift.VOID {
+				err = iprot.Skip(fieldTypeId)
+				if err != nil {
+					return thrift.NewTProtocolExceptionReadField(int(fieldId), fieldName, p.ThriftName(), err)
+				}
+			} else {
+				err = p.ReadField1(iprot)
+				if err != nil {
+					return thrift.NewTProtocolExceptionReadField(int(fieldId), fieldName, p.ThriftName(), err)
+				}
+			}
+		} else if fieldId == 2 || fieldName == "type" {
+			if fieldTypeId == thrift.STRING {
+				err = p.ReadField2(iprot)
+				if err != nil {
+					return thrift.NewTProtocolExceptionReadField(int(fieldId), fieldName, p.ThriftName(), err)
+				}
+			} else if fieldTypeId == thrift.VOID {
+				err = iprot.Skip(fieldTypeId)
+				if err != nil {
+					return thrift.NewTProtocolExceptionReadField(int(fieldId), fieldName, p.ThriftName(), err)
+				}
+			} else {
+				err = p.ReadField2(iprot)
+				if err != nil {
+					return thrift.NewTProtocolExceptionReadField(int(fieldId), fieldName, p.ThriftName(), err)
+				}
+			}
+		} else if fieldId == 3 || fieldName == "message" {
+			if fieldTypeId == thrift.STRUCT {
+				err = p.ReadField3(iprot)
+				if err != nil {
+					return thrift.NewTProtocolExceptionReadField(int(fieldId), fieldName, p.ThriftName(), err)
+				}
+			} else if fieldTypeId == thrift.VOID {
+				err = iprot.Skip(fieldTypeId)
+				if err != nil {
+					return thrift.NewTProtocolExceptionReadField(int(fieldId), fieldName, p.ThriftName(), err)
+				}
+			} else {
+				err = p.ReadField3(iprot)
+				if err != nil {
+					return thrift.NewTProtocolExceptionReadField(int(fieldId), fieldName, p.ThriftName(), err)
+				}
+			}
+		} else {
+			err = iprot.Skip(fieldTypeId)
+			if err != nil {
+				return thrift.NewTProtocolExceptionReadField(int(fieldId), fieldName, p.ThriftName(), err)
+			}
+		}
+		err = iprot.ReadFieldEnd()
+		if err != nil {
+			return thrift.NewTProtocolExceptionReadField(int(fieldId), fieldName, p.ThriftName(), err)
+		}
+	}
+	err = iprot.ReadStructEnd()
+	if err != nil {
+		return thrift.NewTProtocolExceptionReadStruct(p.ThriftName(), err)
+	}
+	return err
 }
 
 func (p *SendMessageArgs) ReadField1(iprot thrift.TProtocol) (err thrift.TProtocolException) {
-  p.UserId = NewUserId()
-  err68 := p.UserId.Read(iprot)
-  if err68 != nil { return thrift.NewTProtocolExceptionReadStruct("p.UserIdUserId", err68); }
-  return err
+	p.UserId = NewUserId()
+	err68 := p.UserId.Read(iprot)
+	if err68 != nil {
+		return thrift.NewTProtocolExceptionReadStruct("p.UserIdUserId", err68)
+	}
+	return err
 }
 
-func (p *SendMessageArgs) ReadFieldUserId(iprot thrift.TProtocol) (thrift.TProtocolException) {
-  return p.ReadField1(iprot)
+func (p *SendMessageArgs) ReadFieldUserId(iprot thrift.TProtocol) thrift.TProtocolException {
+	return p.ReadField1(iprot)
 }
 
 func (p *SendMessageArgs) ReadField2(iprot thrift.TProtocol) (err thrift.TProtocolException) {
-  v69, err70 := iprot.ReadString()
-  if err70 != nil { return thrift.NewTProtocolExceptionReadField(2, "type", p.ThriftName(), err70); }
-  p.TypeA1 = v69
-  return err
+	v69, err70 := iprot.ReadString()
+	if err70 != nil {
+		return thrift.NewTProtocolExceptionReadField(2, "type", p.ThriftName(), err70)
+	}
+	p.TypeA1 = v69
+	return err
 }
 
-func (p *SendMessageArgs) ReadFieldType(iprot thrift.TProtocol) (thrift.TProtocolException) {
-  return p.ReadField2(iprot)
+func (p *SendMessageArgs) ReadFieldType(iprot thrift.TProtocol) thrift.TProtocolException {
+	return p.ReadField2(iprot)
 }
 
 func (p *SendMessageArgs) ReadField3(iprot thrift.TProtocol) (err thrift.TProtocolException) {
-  p.Message = NewMessage()
-  err73 := p.Message.Read(iprot)
-  if err73 != nil { return thrift.NewTProtocolExceptionReadStruct("p.MessageMessage", err73); }
-  return err
+	p.Message = NewMessage()
+	err73 := p.Message.Read(iprot)
+	if err73 != nil {
+		return thrift.NewTProtocolExceptionReadStruct("p.MessageMessage", err73)
+	}
+	return err
 }
 
-func (p *SendMessageArgs) ReadFieldMessage(iprot thrift.TProtocol) (thrift.TProtocolException) {
-  return p.ReadField3(iprot)
+func (p *SendMessageArgs) ReadFieldMessage(iprot thrift.TProtocol) thrift.TProtocolException {
+	return p.ReadField3(iprot)
 }
 
 func (p *SendMessageArgs) Write(oprot thrift.TProtocol) (err thrift.TProtocolException) {
-  err = oprot.WriteStructBegin("sendMessage_args")
-  if err != nil { return thrift.NewTProtocolExceptionWriteStruct(p.ThriftName(), err); }
-  err = p.WriteField1(oprot)
-  if err != nil { return err }
-  err = p.WriteField2(oprot)
-  if err != nil { return err }
-  err = p.WriteField3(oprot)
-  if err != nil { return err }
-  err = oprot.WriteFieldStop()
-  if err != nil { return thrift.NewTProtocolExceptionWriteField(-1, "STOP", p.ThriftName(), err); }
-  err = oprot.WriteStructEnd()
-  if err != nil { return thrift.NewTProtocolExceptionWriteStruct(p.ThriftName(), err); }
-  return err
+	err = oprot.WriteStructBegin("sendMessage_args")
+	if err != nil {
+		return thrift.NewTProtocolExceptionWriteStruct(p.ThriftName(), err)
+	}
+	err = p.WriteField1(oprot)
+	if err != nil {
+		return err
+	}
+	err = p.WriteField2(oprot)
+	if err != nil {
+		return err
+	}
+	err = p.WriteField3(oprot)
+	if err != nil {
+		return err
+	}
+	err = oprot.WriteFieldStop()
+	if err != nil {
+		return thrift.NewTProtocolExceptionWriteField(-1, "STOP", p.ThriftName(), err)
+	}
+	err = oprot.WriteStructEnd()
+	if err != nil {
+		return thrift.NewTProtocolExceptionWriteStruct(p.ThriftName(), err)
+	}
+	return err
 }
 
 func (p *SendMessageArgs) WriteField1(oprot thrift.TProtocol) (err thrift.TProtocolException) {
-  if p.UserId != nil {
-    err = oprot.WriteFieldBegin("userId", thrift.STRUCT, 1)
-    if err != nil { return thrift.NewTProtocolExceptionWriteField(1, "userId", p.ThriftName(), err); }
-    err = p.UserId.Write(oprot)
-    if err != nil { return thrift.NewTProtocolExceptionWriteStruct("UserId", err); }
-    err = oprot.WriteFieldEnd()
-    if err != nil { return thrift.NewTProtocolExceptionWriteField(1, "userId", p.ThriftName(), err); }
-  }
-  return err
+	if p.UserId != nil {
+		err = oprot.WriteFieldBegin("userId", thrift.STRUCT, 1)
+		if err != nil {
+			return thrift.NewTProtocolExceptionWriteField(1, "userId", p.ThriftName(), err)
+		}
+		err = p.UserId.Write(oprot)
+		if err != nil {
+			return thrift.NewTProtocolExceptionWriteStruct("UserId", err)
+		}
+		err = oprot.WriteFieldEnd()
+		if err != nil {
+			return thrift.NewTProtocolExceptionWriteField(1, "userId", p.ThriftName(), err)
+		}
+	}
+	return err
 }
 
-func (p *SendMessageArgs) WriteFieldUserId(oprot thrift.TProtocol) (thrift.TProtocolException) {
-  return p.WriteField1(oprot)
+func (p *SendMessageArgs) WriteFieldUserId(oprot thrift.TProtocol) thrift.TProtocolException {
+	return p.WriteField1(oprot)
 }
 
 func (p *SendMessageArgs) WriteField2(oprot thrift.TProtocol) (err thrift.TProtocolException) {
-  err = oprot.WriteFieldBegin("type", thrift.STRING, 2)
-  if err != nil { return thrift.NewTProtocolExceptionWriteField(2, "type", p.ThriftName(), err); }
-  err = oprot.WriteString(string(p.TypeA1))
-  if err != nil { return thrift.NewTProtocolExceptionWriteField(2, "type", p.ThriftName(), err); }
-  err = oprot.WriteFieldEnd()
-  if err != nil { return thrift.NewTProtocolExceptionWriteField(2, "type", p.ThriftName(), err); }
-  return err
+	err = oprot.WriteFieldBegin("type", thrift.STRING, 2)
+	if err != nil {
+		return thrift.NewTProtocolExceptionWriteField(2, "type", p.ThriftName(), err)
+	}
+	err = oprot.WriteString(string(p.TypeA1))
+	if err != nil {
+		return thrift.NewTProtocolExceptionWriteField(2, "type", p.ThriftName(), err)
+	}
+	err = oprot.WriteFieldEnd()
+	if err != nil {
+		return thrift.NewTProtocolExceptionWriteField(2, "type", p.ThriftName(), err)
+	}
+	return err
 }
 
-func (p *SendMessageArgs) WriteFieldType(oprot thrift.TProtocol) (thrift.TProtocolException) {
-  return p.WriteField2(oprot)
+func (p *SendMessageArgs) WriteFieldType(oprot thrift.TProtocol) thrift.TProtocolException {
+	return p.WriteField2(oprot)
 }
 
 func (p *SendMessageArgs) WriteField3(oprot thrift.TProtocol) (err thrift.TProtocolException) {
-  if p.Message != nil {
-    err = oprot.WriteFieldBegin("message", thrift.STRUCT, 3)
-    if err != nil { return thrift.NewTProtocolExceptionWriteField(3, "message", p.ThriftName(), err); }
-    err = p.Message.Write(oprot)
-    if err != nil { return thrift.NewTProtocolExceptionWriteStruct("Message", err); }
-    err = oprot.WriteFieldEnd()
-    if err != nil { return thrift.NewTProtocolExceptionWriteField(3, "message", p.ThriftName(), err); }
-  }
-  return err
+	if p.Message != nil {
+		err = oprot.WriteFieldBegin("message", thrift.STRUCT, 3)
+		if err != nil {
+			return thrift.NewTProtocolExceptionWriteField(3, "message", p.ThriftName(), err)
+		}
+		err = p.Message.Write(oprot)
+		if err != nil {
+			return thrift.NewTProtocolExceptionWriteStruct("Message", err)
+		}
+		err = oprot.WriteFieldEnd()
+		if err != nil {
+			return thrift.NewTProtocolExceptionWriteField(3, "message", p.ThriftName(), err)
+		}
+	}
+	return err
 }
 
-func (p *SendMessageArgs) WriteFieldMessage(oprot thrift.TProtocol) (thrift.TProtocolException) {
-  return p.WriteField3(oprot)
+func (p *SendMessageArgs) WriteFieldMessage(oprot thrift.TProtocol) thrift.TProtocolException {
+	return p.WriteField3(oprot)
 }
 
 func (p *SendMessageArgs) TStructName() string {
-  return "SendMessageArgs"
+	return "SendMessageArgs"
 }
 
 func (p *SendMessageArgs) ThriftName() string {
-  return "sendMessage_args"
+	return "sendMessage_args"
 }
 
 func (p *SendMessageArgs) String() string {
-  if p == nil {
-    return "<nil>"
-  }
-  return fmt.Sprintf("SendMessageArgs(%+v)", *p)
+	if p == nil {
+		return "<nil>"
+	}
+	return fmt.Sprintf("SendMessageArgs(%+v)", *p)
 }
 
 func (p *SendMessageArgs) CompareTo(other interface{}) (int, bool) {
-  if other == nil {
-    return 1, true
-  }
-  data, ok := other.(*SendMessageArgs)
-  if !ok {
-    return 0, false
-  }
-  if cmp, ok := p.UserId.CompareTo(data.UserId); !ok || cmp != 0 {
-    return cmp, ok
-  }
-  if p.TypeA1 != data.TypeA1 {
-    if p.TypeA1 < data.TypeA1 {
-      return -1, true
-    }
-    return 1, true
-  }
-  if cmp, ok := p.Message.CompareTo(data.Message); !ok || cmp != 0 {
-    return cmp, ok
-  }
-  return 0, true
+	if other == nil {
+		return 1, true
+	}
+	data, ok := other.(*SendMessageArgs)
+	if !ok {
+		return 0, false
+	}
+	if cmp, ok := p.UserId.CompareTo(data.UserId); !ok || cmp != 0 {
+		return cmp, ok
+	}
+	if p.TypeA1 != data.TypeA1 {
+		if p.TypeA1 < data.TypeA1 {
+			return -1, true
+		}
+		return 1, true
+	}
+	if cmp, ok := p.Message.CompareTo(data.Message); !ok || cmp != 0 {
+		return cmp, ok
+	}
+	return 0, true
 }
 
 func (p *SendMessageArgs) AttributeByFieldId(id int) interface{} {
-  switch id {
-  default: return nil
-  case 1: return p.UserId
-  case 2: return p.TypeA1
-  case 3: return p.Message
-  }
-  return nil
+	switch id {
+	default:
+		return nil
+	case 1:
+		return p.UserId
+	case 2:
+		return p.TypeA1
+	case 3:
+		return p.Message
+	}
+	return nil
 }
 
 func (p *SendMessageArgs) TStructFields() thrift.TFieldContainer {
-  return thrift.NewTFieldContainer([]thrift.TField{
-    thrift.NewTField("userId", thrift.STRUCT, 1),
-    thrift.NewTField("type", thrift.STRING, 2),
-    thrift.NewTField("message", thrift.STRUCT, 3),
-    })
+	return thrift.NewTFieldContainer([]thrift.TField{
+		thrift.NewTField("userId", thrift.STRUCT, 1),
+		thrift.NewTField("type", thrift.STRING, 2),
+		thrift.NewTField("message", thrift.STRUCT, 3),
+	})
 }
 
 type SendMessageResult struct {
-  thrift.TStruct
+	thrift.TStruct
 }
 
 func NewSendMessageResult() *SendMessageResult {
-  output := &SendMessageResult{
-    TStruct:thrift.NewTStruct("sendMessage_result", []thrift.TField{
-    }),
-  }
-  {
-  }
-  return output
+	output := &SendMessageResult{
+		TStruct: thrift.NewTStruct("sendMessage_result", []thrift.TField{}),
+	}
+	{
+	}
+	return output
 }
 
 func (p *SendMessageResult) Read(iprot thrift.TProtocol) (err thrift.TProtocolException) {
-  _, err = iprot.ReadStructBegin()
-  if err != nil { return thrift.NewTProtocolExceptionReadStruct(p.ThriftName(), err); }
-  for {
-    fieldName, fieldTypeId, fieldId, err := iprot.ReadFieldBegin()
-    if fieldId < 0 {
-      fieldId = int16(p.FieldIdFromFieldName(fieldName))
-    } else if fieldName == "" {
-      fieldName = p.FieldNameFromFieldId(int(fieldId))
-    }
-    if fieldTypeId == thrift.GENERIC {
-      fieldTypeId = p.FieldFromFieldId(int(fieldId)).TypeId()
-    }
-    if err != nil {
-      return thrift.NewTProtocolExceptionReadField(int(fieldId), fieldName, p.ThriftName(), err)
-    }
-    if fieldTypeId == thrift.STOP { break; }
-    err = iprot.Skip(fieldTypeId)
-    if err != nil { return thrift.NewTProtocolExceptionReadField(int(fieldId), fieldName, p.ThriftName(), err); }
-    err = iprot.ReadFieldEnd()
-    if err != nil { return thrift.NewTProtocolExceptionReadField(int(fieldId), fieldName, p.ThriftName(), err); }
-  }
-  err = iprot.ReadStructEnd()
-  if err != nil { return thrift.NewTProtocolExceptionReadStruct(p.ThriftName(), err); }
-  return err
+	_, err = iprot.ReadStructBegin()
+	if err != nil {
+		return thrift.NewTProtocolExceptionReadStruct(p.ThriftName(), err)
+	}
+	for {
+		fieldName, fieldTypeId, fieldId, err := iprot.ReadFieldBegin()
+		if fieldId < 0 {
+			fieldId = int16(p.FieldIdFromFieldName(fieldName))
+		} else if fieldName == "" {
+			fieldName = p.FieldNameFromFieldId(int(fieldId))
+		}
+		if fieldTypeId == thrift.GENERIC {
+			fieldTypeId = p.FieldFromFieldId(int(fieldId)).TypeId()
+		}
+		if err != nil {
+			return thrift.NewTProtocolExceptionReadField(int(fieldId), fieldName, p.ThriftName(), err)
+		}
+		if fieldTypeId == thrift.STOP {
+			break
+		}
+		err = iprot.Skip(fieldTypeId)
+		if err != nil {
+			return thrift.NewTProtocolExceptionReadField(int(fieldId), fieldName, p.ThriftName(), err)
+		}
+		err = iprot.ReadFieldEnd()
+		if err != nil {
+			return thrift.NewTProtocolExceptionReadField(int(fieldId), fieldName, p.ThriftName(), err)
+		}
+	}
+	err = iprot.ReadStructEnd()
+	if err != nil {
+		return thrift.NewTProtocolExceptionReadStruct(p.ThriftName(), err)
+	}
+	return err
 }
 
 func (p *SendMessageResult) Write(oprot thrift.TProtocol) (err thrift.TProtocolException) {
-  err = oprot.WriteStructBegin("sendMessage_result")
-  if err != nil { return thrift.NewTProtocolExceptionWriteStruct(p.ThriftName(), err); }
-  err = oprot.WriteFieldStop()
-  if err != nil { return thrift.NewTProtocolExceptionWriteField(-1, "STOP", p.ThriftName(), err); }
-  err = oprot.WriteStructEnd()
-  if err != nil { return thrift.NewTProtocolExceptionWriteStruct(p.ThriftName(), err); }
-  return err
+	err = oprot.WriteStructBegin("sendMessage_result")
+	if err != nil {
+		return thrift.NewTProtocolExceptionWriteStruct(p.ThriftName(), err)
+	}
+	err = oprot.WriteFieldStop()
+	if err != nil {
+		return thrift.NewTProtocolExceptionWriteField(-1, "STOP", p.ThriftName(), err)
+	}
+	err = oprot.WriteStructEnd()
+	if err != nil {
+		return thrift.NewTProtocolExceptionWriteStruct(p.ThriftName(), err)
+	}
+	return err
 }
 
 func (p *SendMessageResult) TStructName() string {
-  return "SendMessageResult"
+	return "SendMessageResult"
 }
 
 func (p *SendMessageResult) ThriftName() string {
-  return "sendMessage_result"
+	return "sendMessage_result"
 }
 
 func (p *SendMessageResult) String() string {
-  if p == nil {
-    return "<nil>"
-  }
-  return fmt.Sprintf("SendMessageResult(%+v)", *p)
+	if p == nil {
+		return "<nil>"
+	}
+	return fmt.Sprintf("SendMessageResult(%+v)", *p)
 }
 
 func (p *SendMessageResult) CompareTo(other interface{}) (int, bool) {
-  if other == nil {
-    return 1, true
-  }
-  _, ok := other.(*SendMessageResult)
-  if !ok {
-    return 0, false
-  }
-  return 0, true
+	if other == nil {
+		return 1, true
+	}
+	_, ok := other.(*SendMessageResult)
+	if !ok {
+		return 0, false
+	}
+	return 0, true
 }
 
 func (p *SendMessageResult) AttributeByFieldId(id int) interface{} {
-  switch id {
-  default: return nil
-  }
-  return nil
+	switch id {
+	default:
+		return nil
+	}
+	return nil
 }
 
 func (p *SendMessageResult) TStructFields() thrift.TFieldContainer {
-  return thrift.NewTFieldContainer([]thrift.TField{
-    })
+	return thrift.NewTFieldContainer([]thrift.TField{})
 }
 
 /**
@@ -1556,342 +1742,431 @@ func (p *SendMessageResult) TStructFields() thrift.TFieldContainer {
  *  - Message
  */
 type SendMessageToUserIdCollectionArgs struct {
-  thrift.TStruct
-  UserIdCollection UserIdCollection "userIdCollection"; // 1
-  TypeA1 string "type"; // 2
-  Message *Message "message"; // 3
+	thrift.TStruct
+	UserIdCollection UserIdCollection "userIdCollection" // 1
+	TypeA1           string           "type"             // 2
+	Message          *Message         "message"          // 3
 }
 
 func NewSendMessageToUserIdCollectionArgs() *SendMessageToUserIdCollectionArgs {
-  output := &SendMessageToUserIdCollectionArgs{
-    TStruct:thrift.NewTStruct("sendMessageToUserIdCollection_args", []thrift.TField{
-    thrift.NewTField("userIdCollection", thrift.LIST, 1),
-    thrift.NewTField("type", thrift.STRING, 2),
-    thrift.NewTField("message", thrift.STRUCT, 3),
-    }),
-  }
-  {
-  }
-  return output
+	output := &SendMessageToUserIdCollectionArgs{
+		TStruct: thrift.NewTStruct("sendMessageToUserIdCollection_args", []thrift.TField{
+			thrift.NewTField("userIdCollection", thrift.LIST, 1),
+			thrift.NewTField("type", thrift.STRING, 2),
+			thrift.NewTField("message", thrift.STRUCT, 3),
+		}),
+	}
+	{
+	}
+	return output
 }
 
 func (p *SendMessageToUserIdCollectionArgs) Read(iprot thrift.TProtocol) (err thrift.TProtocolException) {
-  _, err = iprot.ReadStructBegin()
-  if err != nil { return thrift.NewTProtocolExceptionReadStruct(p.ThriftName(), err); }
-  for {
-    fieldName, fieldTypeId, fieldId, err := iprot.ReadFieldBegin()
-    if fieldId < 0 {
-      fieldId = int16(p.FieldIdFromFieldName(fieldName))
-    } else if fieldName == "" {
-      fieldName = p.FieldNameFromFieldId(int(fieldId))
-    }
-    if fieldTypeId == thrift.GENERIC {
-      fieldTypeId = p.FieldFromFieldId(int(fieldId)).TypeId()
-    }
-    if err != nil {
-      return thrift.NewTProtocolExceptionReadField(int(fieldId), fieldName, p.ThriftName(), err)
-    }
-    if fieldTypeId == thrift.STOP { break; }
-    if fieldId == 1 || fieldName == "userIdCollection" {
-      if fieldTypeId == thrift.LIST {
-        err = p.ReadField1(iprot)
-        if err != nil { return thrift.NewTProtocolExceptionReadField(int(fieldId), fieldName, p.ThriftName(), err); }
-      } else if fieldTypeId == thrift.VOID {
-        err = iprot.Skip(fieldTypeId)
-        if err != nil { return thrift.NewTProtocolExceptionReadField(int(fieldId), fieldName, p.ThriftName(), err); }
-      } else {
-        err = p.ReadField1(iprot)
-        if err != nil { return thrift.NewTProtocolExceptionReadField(int(fieldId), fieldName, p.ThriftName(), err); }
-      }
-    } else if fieldId == 2 || fieldName == "type" {
-      if fieldTypeId == thrift.STRING {
-        err = p.ReadField2(iprot)
-        if err != nil { return thrift.NewTProtocolExceptionReadField(int(fieldId), fieldName, p.ThriftName(), err); }
-      } else if fieldTypeId == thrift.VOID {
-        err = iprot.Skip(fieldTypeId)
-        if err != nil { return thrift.NewTProtocolExceptionReadField(int(fieldId), fieldName, p.ThriftName(), err); }
-      } else {
-        err = p.ReadField2(iprot)
-        if err != nil { return thrift.NewTProtocolExceptionReadField(int(fieldId), fieldName, p.ThriftName(), err); }
-      }
-    } else if fieldId == 3 || fieldName == "message" {
-      if fieldTypeId == thrift.STRUCT {
-        err = p.ReadField3(iprot)
-        if err != nil { return thrift.NewTProtocolExceptionReadField(int(fieldId), fieldName, p.ThriftName(), err); }
-      } else if fieldTypeId == thrift.VOID {
-        err = iprot.Skip(fieldTypeId)
-        if err != nil { return thrift.NewTProtocolExceptionReadField(int(fieldId), fieldName, p.ThriftName(), err); }
-      } else {
-        err = p.ReadField3(iprot)
-        if err != nil { return thrift.NewTProtocolExceptionReadField(int(fieldId), fieldName, p.ThriftName(), err); }
-      }
-    } else {
-      err = iprot.Skip(fieldTypeId)
-      if err != nil { return thrift.NewTProtocolExceptionReadField(int(fieldId), fieldName, p.ThriftName(), err); }
-    }
-    err = iprot.ReadFieldEnd()
-    if err != nil { return thrift.NewTProtocolExceptionReadField(int(fieldId), fieldName, p.ThriftName(), err); }
-  }
-  err = iprot.ReadStructEnd()
-  if err != nil { return thrift.NewTProtocolExceptionReadStruct(p.ThriftName(), err); }
-  return err
+	_, err = iprot.ReadStructBegin()
+	if err != nil {
+		return thrift.NewTProtocolExceptionReadStruct(p.ThriftName(), err)
+	}
+	for {
+		fieldName, fieldTypeId, fieldId, err := iprot.ReadFieldBegin()
+		if fieldId < 0 {
+			fieldId = int16(p.FieldIdFromFieldName(fieldName))
+		} else if fieldName == "" {
+			fieldName = p.FieldNameFromFieldId(int(fieldId))
+		}
+		if fieldTypeId == thrift.GENERIC {
+			fieldTypeId = p.FieldFromFieldId(int(fieldId)).TypeId()
+		}
+		if err != nil {
+			return thrift.NewTProtocolExceptionReadField(int(fieldId), fieldName, p.ThriftName(), err)
+		}
+		if fieldTypeId == thrift.STOP {
+			break
+		}
+		if fieldId == 1 || fieldName == "userIdCollection" {
+			if fieldTypeId == thrift.LIST {
+				err = p.ReadField1(iprot)
+				if err != nil {
+					return thrift.NewTProtocolExceptionReadField(int(fieldId), fieldName, p.ThriftName(), err)
+				}
+			} else if fieldTypeId == thrift.VOID {
+				err = iprot.Skip(fieldTypeId)
+				if err != nil {
+					return thrift.NewTProtocolExceptionReadField(int(fieldId), fieldName, p.ThriftName(), err)
+				}
+			} else {
+				err = p.ReadField1(iprot)
+				if err != nil {
+					return thrift.NewTProtocolExceptionReadField(int(fieldId), fieldName, p.ThriftName(), err)
+				}
+			}
+		} else if fieldId == 2 || fieldName == "type" {
+			if fieldTypeId == thrift.STRING {
+				err = p.ReadField2(iprot)
+				if err != nil {
+					return thrift.NewTProtocolExceptionReadField(int(fieldId), fieldName, p.ThriftName(), err)
+				}
+			} else if fieldTypeId == thrift.VOID {
+				err = iprot.Skip(fieldTypeId)
+				if err != nil {
+					return thrift.NewTProtocolExceptionReadField(int(fieldId), fieldName, p.ThriftName(), err)
+				}
+			} else {
+				err = p.ReadField2(iprot)
+				if err != nil {
+					return thrift.NewTProtocolExceptionReadField(int(fieldId), fieldName, p.ThriftName(), err)
+				}
+			}
+		} else if fieldId == 3 || fieldName == "message" {
+			if fieldTypeId == thrift.STRUCT {
+				err = p.ReadField3(iprot)
+				if err != nil {
+					return thrift.NewTProtocolExceptionReadField(int(fieldId), fieldName, p.ThriftName(), err)
+				}
+			} else if fieldTypeId == thrift.VOID {
+				err = iprot.Skip(fieldTypeId)
+				if err != nil {
+					return thrift.NewTProtocolExceptionReadField(int(fieldId), fieldName, p.ThriftName(), err)
+				}
+			} else {
+				err = p.ReadField3(iprot)
+				if err != nil {
+					return thrift.NewTProtocolExceptionReadField(int(fieldId), fieldName, p.ThriftName(), err)
+				}
+			}
+		} else {
+			err = iprot.Skip(fieldTypeId)
+			if err != nil {
+				return thrift.NewTProtocolExceptionReadField(int(fieldId), fieldName, p.ThriftName(), err)
+			}
+		}
+		err = iprot.ReadFieldEnd()
+		if err != nil {
+			return thrift.NewTProtocolExceptionReadField(int(fieldId), fieldName, p.ThriftName(), err)
+		}
+	}
+	err = iprot.ReadStructEnd()
+	if err != nil {
+		return thrift.NewTProtocolExceptionReadStruct(p.ThriftName(), err)
+	}
+	return err
 }
 
 func (p *SendMessageToUserIdCollectionArgs) ReadField1(iprot thrift.TProtocol) (err thrift.TProtocolException) {
-  _etype79, _size76, err := iprot.ReadListBegin()
-  if err != nil {
-    return thrift.NewTProtocolExceptionReadField(-1, "p.UserIdCollection", "", err)
-  }
-  p.UserIdCollection = thrift.NewTList(_etype79, _size76)
-  for _i80:= 0; _i80 < _size76; _i80++ {
-    _elem81 := NewUserId()
-    err84 := _elem81.Read(iprot)
-    if err84 != nil { return thrift.NewTProtocolExceptionReadStruct("_elem81UserId", err84); }
-    p.UserIdCollection.Push(_elem81)
-  }
-  err = iprot.ReadListEnd()
-  if err != nil { return thrift.NewTProtocolExceptionReadField(-1, "", "list",err); }
-  return err
+	_etype79, _size76, err := iprot.ReadListBegin()
+	if err != nil {
+		return thrift.NewTProtocolExceptionReadField(-1, "p.UserIdCollection", "", err)
+	}
+	p.UserIdCollection = thrift.NewTList(_etype79, _size76)
+	for _i80 := 0; _i80 < _size76; _i80++ {
+		_elem81 := NewUserId()
+		err84 := _elem81.Read(iprot)
+		if err84 != nil {
+			return thrift.NewTProtocolExceptionReadStruct("_elem81UserId", err84)
+		}
+		p.UserIdCollection.Push(_elem81)
+	}
+	err = iprot.ReadListEnd()
+	if err != nil {
+		return thrift.NewTProtocolExceptionReadField(-1, "", "list", err)
+	}
+	return err
 }
 
-func (p *SendMessageToUserIdCollectionArgs) ReadFieldUserIdCollection(iprot thrift.TProtocol) (thrift.TProtocolException) {
-  return p.ReadField1(iprot)
+func (p *SendMessageToUserIdCollectionArgs) ReadFieldUserIdCollection(iprot thrift.TProtocol) thrift.TProtocolException {
+	return p.ReadField1(iprot)
 }
 
 func (p *SendMessageToUserIdCollectionArgs) ReadField2(iprot thrift.TProtocol) (err thrift.TProtocolException) {
-  v85, err86 := iprot.ReadString()
-  if err86 != nil { return thrift.NewTProtocolExceptionReadField(2, "type", p.ThriftName(), err86); }
-  p.TypeA1 = v85
-  return err
+	v85, err86 := iprot.ReadString()
+	if err86 != nil {
+		return thrift.NewTProtocolExceptionReadField(2, "type", p.ThriftName(), err86)
+	}
+	p.TypeA1 = v85
+	return err
 }
 
-func (p *SendMessageToUserIdCollectionArgs) ReadFieldType(iprot thrift.TProtocol) (thrift.TProtocolException) {
-  return p.ReadField2(iprot)
+func (p *SendMessageToUserIdCollectionArgs) ReadFieldType(iprot thrift.TProtocol) thrift.TProtocolException {
+	return p.ReadField2(iprot)
 }
 
 func (p *SendMessageToUserIdCollectionArgs) ReadField3(iprot thrift.TProtocol) (err thrift.TProtocolException) {
-  p.Message = NewMessage()
-  err89 := p.Message.Read(iprot)
-  if err89 != nil { return thrift.NewTProtocolExceptionReadStruct("p.MessageMessage", err89); }
-  return err
+	p.Message = NewMessage()
+	err89 := p.Message.Read(iprot)
+	if err89 != nil {
+		return thrift.NewTProtocolExceptionReadStruct("p.MessageMessage", err89)
+	}
+	return err
 }
 
-func (p *SendMessageToUserIdCollectionArgs) ReadFieldMessage(iprot thrift.TProtocol) (thrift.TProtocolException) {
-  return p.ReadField3(iprot)
+func (p *SendMessageToUserIdCollectionArgs) ReadFieldMessage(iprot thrift.TProtocol) thrift.TProtocolException {
+	return p.ReadField3(iprot)
 }
 
 func (p *SendMessageToUserIdCollectionArgs) Write(oprot thrift.TProtocol) (err thrift.TProtocolException) {
-  err = oprot.WriteStructBegin("sendMessageToUserIdCollection_args")
-  if err != nil { return thrift.NewTProtocolExceptionWriteStruct(p.ThriftName(), err); }
-  err = p.WriteField1(oprot)
-  if err != nil { return err }
-  err = p.WriteField2(oprot)
-  if err != nil { return err }
-  err = p.WriteField3(oprot)
-  if err != nil { return err }
-  err = oprot.WriteFieldStop()
-  if err != nil { return thrift.NewTProtocolExceptionWriteField(-1, "STOP", p.ThriftName(), err); }
-  err = oprot.WriteStructEnd()
-  if err != nil { return thrift.NewTProtocolExceptionWriteStruct(p.ThriftName(), err); }
-  return err
+	err = oprot.WriteStructBegin("sendMessageToUserIdCollection_args")
+	if err != nil {
+		return thrift.NewTProtocolExceptionWriteStruct(p.ThriftName(), err)
+	}
+	err = p.WriteField1(oprot)
+	if err != nil {
+		return err
+	}
+	err = p.WriteField2(oprot)
+	if err != nil {
+		return err
+	}
+	err = p.WriteField3(oprot)
+	if err != nil {
+		return err
+	}
+	err = oprot.WriteFieldStop()
+	if err != nil {
+		return thrift.NewTProtocolExceptionWriteField(-1, "STOP", p.ThriftName(), err)
+	}
+	err = oprot.WriteStructEnd()
+	if err != nil {
+		return thrift.NewTProtocolExceptionWriteStruct(p.ThriftName(), err)
+	}
+	return err
 }
 
 func (p *SendMessageToUserIdCollectionArgs) WriteField1(oprot thrift.TProtocol) (err thrift.TProtocolException) {
-  if p.UserIdCollection != nil {
-    err = oprot.WriteFieldBegin("userIdCollection", thrift.LIST, 1)
-    if err != nil { return thrift.NewTProtocolExceptionWriteField(1, "userIdCollection", p.ThriftName(), err); }
-    err = oprot.WriteListBegin(thrift.STRUCT, p.UserIdCollection.Len())
-    if err != nil { return thrift.NewTProtocolExceptionWriteField(-1, "", "list", err); }
-    for Iter90 := range p.UserIdCollection.Iter() {
-      Iter91 := Iter90.(*UserId)
-      err = Iter91.Write(oprot)
-      if err != nil { return thrift.NewTProtocolExceptionWriteStruct("UserId", err); }
-    }
-    err = oprot.WriteListEnd()
-    if err != nil { return thrift.NewTProtocolExceptionWriteField(-1, "", "list", err); }
-    err = oprot.WriteFieldEnd()
-    if err != nil { return thrift.NewTProtocolExceptionWriteField(1, "userIdCollection", p.ThriftName(), err); }
-  }
-  return err
+	if p.UserIdCollection != nil {
+		err = oprot.WriteFieldBegin("userIdCollection", thrift.LIST, 1)
+		if err != nil {
+			return thrift.NewTProtocolExceptionWriteField(1, "userIdCollection", p.ThriftName(), err)
+		}
+		err = oprot.WriteListBegin(thrift.STRUCT, p.UserIdCollection.Len())
+		if err != nil {
+			return thrift.NewTProtocolExceptionWriteField(-1, "", "list", err)
+		}
+		for Iter90 := range p.UserIdCollection.Iter() {
+			Iter91 := Iter90.(*UserId)
+			err = Iter91.Write(oprot)
+			if err != nil {
+				return thrift.NewTProtocolExceptionWriteStruct("UserId", err)
+			}
+		}
+		err = oprot.WriteListEnd()
+		if err != nil {
+			return thrift.NewTProtocolExceptionWriteField(-1, "", "list", err)
+		}
+		err = oprot.WriteFieldEnd()
+		if err != nil {
+			return thrift.NewTProtocolExceptionWriteField(1, "userIdCollection", p.ThriftName(), err)
+		}
+	}
+	return err
 }
 
-func (p *SendMessageToUserIdCollectionArgs) WriteFieldUserIdCollection(oprot thrift.TProtocol) (thrift.TProtocolException) {
-  return p.WriteField1(oprot)
+func (p *SendMessageToUserIdCollectionArgs) WriteFieldUserIdCollection(oprot thrift.TProtocol) thrift.TProtocolException {
+	return p.WriteField1(oprot)
 }
 
 func (p *SendMessageToUserIdCollectionArgs) WriteField2(oprot thrift.TProtocol) (err thrift.TProtocolException) {
-  err = oprot.WriteFieldBegin("type", thrift.STRING, 2)
-  if err != nil { return thrift.NewTProtocolExceptionWriteField(2, "type", p.ThriftName(), err); }
-  err = oprot.WriteString(string(p.TypeA1))
-  if err != nil { return thrift.NewTProtocolExceptionWriteField(2, "type", p.ThriftName(), err); }
-  err = oprot.WriteFieldEnd()
-  if err != nil { return thrift.NewTProtocolExceptionWriteField(2, "type", p.ThriftName(), err); }
-  return err
+	err = oprot.WriteFieldBegin("type", thrift.STRING, 2)
+	if err != nil {
+		return thrift.NewTProtocolExceptionWriteField(2, "type", p.ThriftName(), err)
+	}
+	err = oprot.WriteString(string(p.TypeA1))
+	if err != nil {
+		return thrift.NewTProtocolExceptionWriteField(2, "type", p.ThriftName(), err)
+	}
+	err = oprot.WriteFieldEnd()
+	if err != nil {
+		return thrift.NewTProtocolExceptionWriteField(2, "type", p.ThriftName(), err)
+	}
+	return err
 }
 
-func (p *SendMessageToUserIdCollectionArgs) WriteFieldType(oprot thrift.TProtocol) (thrift.TProtocolException) {
-  return p.WriteField2(oprot)
+func (p *SendMessageToUserIdCollectionArgs) WriteFieldType(oprot thrift.TProtocol) thrift.TProtocolException {
+	return p.WriteField2(oprot)
 }
 
 func (p *SendMessageToUserIdCollectionArgs) WriteField3(oprot thrift.TProtocol) (err thrift.TProtocolException) {
-  if p.Message != nil {
-    err = oprot.WriteFieldBegin("message", thrift.STRUCT, 3)
-    if err != nil { return thrift.NewTProtocolExceptionWriteField(3, "message", p.ThriftName(), err); }
-    err = p.Message.Write(oprot)
-    if err != nil { return thrift.NewTProtocolExceptionWriteStruct("Message", err); }
-    err = oprot.WriteFieldEnd()
-    if err != nil { return thrift.NewTProtocolExceptionWriteField(3, "message", p.ThriftName(), err); }
-  }
-  return err
+	if p.Message != nil {
+		err = oprot.WriteFieldBegin("message", thrift.STRUCT, 3)
+		if err != nil {
+			return thrift.NewTProtocolExceptionWriteField(3, "message", p.ThriftName(), err)
+		}
+		err = p.Message.Write(oprot)
+		if err != nil {
+			return thrift.NewTProtocolExceptionWriteStruct("Message", err)
+		}
+		err = oprot.WriteFieldEnd()
+		if err != nil {
+			return thrift.NewTProtocolExceptionWriteField(3, "message", p.ThriftName(), err)
+		}
+	}
+	return err
 }
 
-func (p *SendMessageToUserIdCollectionArgs) WriteFieldMessage(oprot thrift.TProtocol) (thrift.TProtocolException) {
-  return p.WriteField3(oprot)
+func (p *SendMessageToUserIdCollectionArgs) WriteFieldMessage(oprot thrift.TProtocol) thrift.TProtocolException {
+	return p.WriteField3(oprot)
 }
 
 func (p *SendMessageToUserIdCollectionArgs) TStructName() string {
-  return "SendMessageToUserIdCollectionArgs"
+	return "SendMessageToUserIdCollectionArgs"
 }
 
 func (p *SendMessageToUserIdCollectionArgs) ThriftName() string {
-  return "sendMessageToUserIdCollection_args"
+	return "sendMessageToUserIdCollection_args"
 }
 
 func (p *SendMessageToUserIdCollectionArgs) String() string {
-  if p == nil {
-    return "<nil>"
-  }
-  return fmt.Sprintf("SendMessageToUserIdCollectionArgs(%+v)", *p)
+	if p == nil {
+		return "<nil>"
+	}
+	return fmt.Sprintf("SendMessageToUserIdCollectionArgs(%+v)", *p)
 }
 
 func (p *SendMessageToUserIdCollectionArgs) CompareTo(other interface{}) (int, bool) {
-  if other == nil {
-    return 1, true
-  }
-  data, ok := other.(*SendMessageToUserIdCollectionArgs)
-  if !ok {
-    return 0, false
-  }
-  if cmp, ok := p.UserIdCollection.CompareTo(data.UserIdCollection); !ok || cmp != 0 {
-    return cmp, ok
-  }
-  if p.TypeA1 != data.TypeA1 {
-    if p.TypeA1 < data.TypeA1 {
-      return -1, true
-    }
-    return 1, true
-  }
-  if cmp, ok := p.Message.CompareTo(data.Message); !ok || cmp != 0 {
-    return cmp, ok
-  }
-  return 0, true
+	if other == nil {
+		return 1, true
+	}
+	data, ok := other.(*SendMessageToUserIdCollectionArgs)
+	if !ok {
+		return 0, false
+	}
+	if cmp, ok := p.UserIdCollection.CompareTo(data.UserIdCollection); !ok || cmp != 0 {
+		return cmp, ok
+	}
+	if p.TypeA1 != data.TypeA1 {
+		if p.TypeA1 < data.TypeA1 {
+			return -1, true
+		}
+		return 1, true
+	}
+	if cmp, ok := p.Message.CompareTo(data.Message); !ok || cmp != 0 {
+		return cmp, ok
+	}
+	return 0, true
 }
 
 func (p *SendMessageToUserIdCollectionArgs) AttributeByFieldId(id int) interface{} {
-  switch id {
-  default: return nil
-  case 1: return p.UserIdCollection
-  case 2: return p.TypeA1
-  case 3: return p.Message
-  }
-  return nil
+	switch id {
+	default:
+		return nil
+	case 1:
+		return p.UserIdCollection
+	case 2:
+		return p.TypeA1
+	case 3:
+		return p.Message
+	}
+	return nil
 }
 
 func (p *SendMessageToUserIdCollectionArgs) TStructFields() thrift.TFieldContainer {
-  return thrift.NewTFieldContainer([]thrift.TField{
-    thrift.NewTField("userIdCollection", thrift.LIST, 1),
-    thrift.NewTField("type", thrift.STRING, 2),
-    thrift.NewTField("message", thrift.STRUCT, 3),
-    })
+	return thrift.NewTFieldContainer([]thrift.TField{
+		thrift.NewTField("userIdCollection", thrift.LIST, 1),
+		thrift.NewTField("type", thrift.STRING, 2),
+		thrift.NewTField("message", thrift.STRUCT, 3),
+	})
 }
 
 type SendMessageToUserIdCollectionResult struct {
-  thrift.TStruct
+	thrift.TStruct
 }
 
 func NewSendMessageToUserIdCollectionResult() *SendMessageToUserIdCollectionResult {
-  output := &SendMessageToUserIdCollectionResult{
-    TStruct:thrift.NewTStruct("sendMessageToUserIdCollection_result", []thrift.TField{
-    }),
-  }
-  {
-  }
-  return output
+	output := &SendMessageToUserIdCollectionResult{
+		TStruct: thrift.NewTStruct("sendMessageToUserIdCollection_result", []thrift.TField{}),
+	}
+	{
+	}
+	return output
 }
 
 func (p *SendMessageToUserIdCollectionResult) Read(iprot thrift.TProtocol) (err thrift.TProtocolException) {
-  _, err = iprot.ReadStructBegin()
-  if err != nil { return thrift.NewTProtocolExceptionReadStruct(p.ThriftName(), err); }
-  for {
-    fieldName, fieldTypeId, fieldId, err := iprot.ReadFieldBegin()
-    if fieldId < 0 {
-      fieldId = int16(p.FieldIdFromFieldName(fieldName))
-    } else if fieldName == "" {
-      fieldName = p.FieldNameFromFieldId(int(fieldId))
-    }
-    if fieldTypeId == thrift.GENERIC {
-      fieldTypeId = p.FieldFromFieldId(int(fieldId)).TypeId()
-    }
-    if err != nil {
-      return thrift.NewTProtocolExceptionReadField(int(fieldId), fieldName, p.ThriftName(), err)
-    }
-    if fieldTypeId == thrift.STOP { break; }
-    err = iprot.Skip(fieldTypeId)
-    if err != nil { return thrift.NewTProtocolExceptionReadField(int(fieldId), fieldName, p.ThriftName(), err); }
-    err = iprot.ReadFieldEnd()
-    if err != nil { return thrift.NewTProtocolExceptionReadField(int(fieldId), fieldName, p.ThriftName(), err); }
-  }
-  err = iprot.ReadStructEnd()
-  if err != nil { return thrift.NewTProtocolExceptionReadStruct(p.ThriftName(), err); }
-  return err
+	_, err = iprot.ReadStructBegin()
+	if err != nil {
+		return thrift.NewTProtocolExceptionReadStruct(p.ThriftName(), err)
+	}
+	for {
+		fieldName, fieldTypeId, fieldId, err := iprot.ReadFieldBegin()
+		if fieldId < 0 {
+			fieldId = int16(p.FieldIdFromFieldName(fieldName))
+		} else if fieldName == "" {
+			fieldName = p.FieldNameFromFieldId(int(fieldId))
+		}
+		if fieldTypeId == thrift.GENERIC {
+			fieldTypeId = p.FieldFromFieldId(int(fieldId)).TypeId()
+		}
+		if err != nil {
+			return thrift.NewTProtocolExceptionReadField(int(fieldId), fieldName, p.ThriftName(), err)
+		}
+		if fieldTypeId == thrift.STOP {
+			break
+		}
+		err = iprot.Skip(fieldTypeId)
+		if err != nil {
+			return thrift.NewTProtocolExceptionReadField(int(fieldId), fieldName, p.ThriftName(), err)
+		}
+		err = iprot.ReadFieldEnd()
+		if err != nil {
+			return thrift.NewTProtocolExceptionReadField(int(fieldId), fieldName, p.ThriftName(), err)
+		}
+	}
+	err = iprot.ReadStructEnd()
+	if err != nil {
+		return thrift.NewTProtocolExceptionReadStruct(p.ThriftName(), err)
+	}
+	return err
 }
 
 func (p *SendMessageToUserIdCollectionResult) Write(oprot thrift.TProtocol) (err thrift.TProtocolException) {
-  err = oprot.WriteStructBegin("sendMessageToUserIdCollection_result")
-  if err != nil { return thrift.NewTProtocolExceptionWriteStruct(p.ThriftName(), err); }
-  err = oprot.WriteFieldStop()
-  if err != nil { return thrift.NewTProtocolExceptionWriteField(-1, "STOP", p.ThriftName(), err); }
-  err = oprot.WriteStructEnd()
-  if err != nil { return thrift.NewTProtocolExceptionWriteStruct(p.ThriftName(), err); }
-  return err
+	err = oprot.WriteStructBegin("sendMessageToUserIdCollection_result")
+	if err != nil {
+		return thrift.NewTProtocolExceptionWriteStruct(p.ThriftName(), err)
+	}
+	err = oprot.WriteFieldStop()
+	if err != nil {
+		return thrift.NewTProtocolExceptionWriteField(-1, "STOP", p.ThriftName(), err)
+	}
+	err = oprot.WriteStructEnd()
+	if err != nil {
+		return thrift.NewTProtocolExceptionWriteStruct(p.ThriftName(), err)
+	}
+	return err
 }
 
 func (p *SendMessageToUserIdCollectionResult) TStructName() string {
-  return "SendMessageToUserIdCollectionResult"
+	return "SendMessageToUserIdCollectionResult"
 }
 
 func (p *SendMessageToUserIdCollectionResult) ThriftName() string {
-  return "sendMessageToUserIdCollection_result"
+	return "sendMessageToUserIdCollection_result"
 }
 
 func (p *SendMessageToUserIdCollectionResult) String() string {
-  if p == nil {
-    return "<nil>"
-  }
-  return fmt.Sprintf("SendMessageToUserIdCollectionResult(%+v)", *p)
+	if p == nil {
+		return "<nil>"
+	}
+	return fmt.Sprintf("SendMessageToUserIdCollectionResult(%+v)", *p)
 }
 
 func (p *SendMessageToUserIdCollectionResult) CompareTo(other interface{}) (int, bool) {
-  if other == nil {
-    return 1, true
-  }
-  _, ok := other.(*SendMessageToUserIdCollectionResult)
-  if !ok {
-    return 0, false
-  }
-  return 0, true
+	if other == nil {
+		return 1, true
+	}
+	_, ok := other.(*SendMessageToUserIdCollectionResult)
+	if !ok {
+		return 0, false
+	}
+	return 0, true
 }
 
 func (p *SendMessageToUserIdCollectionResult) AttributeByFieldId(id int) interface{} {
-  switch id {
-  default: return nil
-  }
-  return nil
+	switch id {
+	default:
+		return nil
+	}
+	return nil
 }
 
 func (p *SendMessageToUserIdCollectionResult) TStructFields() thrift.TFieldContainer {
-  return thrift.NewTFieldContainer([]thrift.TField{
-    })
+	return thrift.NewTFieldContainer([]thrift.TField{})
 }
 
 /**
@@ -1899,158 +2174,198 @@ func (p *SendMessageToUserIdCollectionResult) TStructFields() thrift.TFieldConta
  *  - UserIdCollection
  */
 type GetUserOnlineStatusArgs struct {
-  thrift.TStruct
-  UserIdCollection UserIdCollection "userIdCollection"; // 1
+	thrift.TStruct
+	UserIdCollection UserIdCollection "userIdCollection" // 1
 }
 
 func NewGetUserOnlineStatusArgs() *GetUserOnlineStatusArgs {
-  output := &GetUserOnlineStatusArgs{
-    TStruct:thrift.NewTStruct("getUserOnlineStatus_args", []thrift.TField{
-    thrift.NewTField("userIdCollection", thrift.LIST, 1),
-    }),
-  }
-  {
-  }
-  return output
+	output := &GetUserOnlineStatusArgs{
+		TStruct: thrift.NewTStruct("getUserOnlineStatus_args", []thrift.TField{
+			thrift.NewTField("userIdCollection", thrift.LIST, 1),
+		}),
+	}
+	{
+	}
+	return output
 }
 
 func (p *GetUserOnlineStatusArgs) Read(iprot thrift.TProtocol) (err thrift.TProtocolException) {
-  _, err = iprot.ReadStructBegin()
-  if err != nil { return thrift.NewTProtocolExceptionReadStruct(p.ThriftName(), err); }
-  for {
-    fieldName, fieldTypeId, fieldId, err := iprot.ReadFieldBegin()
-    if fieldId < 0 {
-      fieldId = int16(p.FieldIdFromFieldName(fieldName))
-    } else if fieldName == "" {
-      fieldName = p.FieldNameFromFieldId(int(fieldId))
-    }
-    if fieldTypeId == thrift.GENERIC {
-      fieldTypeId = p.FieldFromFieldId(int(fieldId)).TypeId()
-    }
-    if err != nil {
-      return thrift.NewTProtocolExceptionReadField(int(fieldId), fieldName, p.ThriftName(), err)
-    }
-    if fieldTypeId == thrift.STOP { break; }
-    if fieldId == 1 || fieldName == "userIdCollection" {
-      if fieldTypeId == thrift.LIST {
-        err = p.ReadField1(iprot)
-        if err != nil { return thrift.NewTProtocolExceptionReadField(int(fieldId), fieldName, p.ThriftName(), err); }
-      } else if fieldTypeId == thrift.VOID {
-        err = iprot.Skip(fieldTypeId)
-        if err != nil { return thrift.NewTProtocolExceptionReadField(int(fieldId), fieldName, p.ThriftName(), err); }
-      } else {
-        err = p.ReadField1(iprot)
-        if err != nil { return thrift.NewTProtocolExceptionReadField(int(fieldId), fieldName, p.ThriftName(), err); }
-      }
-    } else {
-      err = iprot.Skip(fieldTypeId)
-      if err != nil { return thrift.NewTProtocolExceptionReadField(int(fieldId), fieldName, p.ThriftName(), err); }
-    }
-    err = iprot.ReadFieldEnd()
-    if err != nil { return thrift.NewTProtocolExceptionReadField(int(fieldId), fieldName, p.ThriftName(), err); }
-  }
-  err = iprot.ReadStructEnd()
-  if err != nil { return thrift.NewTProtocolExceptionReadStruct(p.ThriftName(), err); }
-  return err
+	_, err = iprot.ReadStructBegin()
+	if err != nil {
+		return thrift.NewTProtocolExceptionReadStruct(p.ThriftName(), err)
+	}
+	for {
+		fieldName, fieldTypeId, fieldId, err := iprot.ReadFieldBegin()
+		if fieldId < 0 {
+			fieldId = int16(p.FieldIdFromFieldName(fieldName))
+		} else if fieldName == "" {
+			fieldName = p.FieldNameFromFieldId(int(fieldId))
+		}
+		if fieldTypeId == thrift.GENERIC {
+			fieldTypeId = p.FieldFromFieldId(int(fieldId)).TypeId()
+		}
+		if err != nil {
+			return thrift.NewTProtocolExceptionReadField(int(fieldId), fieldName, p.ThriftName(), err)
+		}
+		if fieldTypeId == thrift.STOP {
+			break
+		}
+		if fieldId == 1 || fieldName == "userIdCollection" {
+			if fieldTypeId == thrift.LIST {
+				err = p.ReadField1(iprot)
+				if err != nil {
+					return thrift.NewTProtocolExceptionReadField(int(fieldId), fieldName, p.ThriftName(), err)
+				}
+			} else if fieldTypeId == thrift.VOID {
+				err = iprot.Skip(fieldTypeId)
+				if err != nil {
+					return thrift.NewTProtocolExceptionReadField(int(fieldId), fieldName, p.ThriftName(), err)
+				}
+			} else {
+				err = p.ReadField1(iprot)
+				if err != nil {
+					return thrift.NewTProtocolExceptionReadField(int(fieldId), fieldName, p.ThriftName(), err)
+				}
+			}
+		} else {
+			err = iprot.Skip(fieldTypeId)
+			if err != nil {
+				return thrift.NewTProtocolExceptionReadField(int(fieldId), fieldName, p.ThriftName(), err)
+			}
+		}
+		err = iprot.ReadFieldEnd()
+		if err != nil {
+			return thrift.NewTProtocolExceptionReadField(int(fieldId), fieldName, p.ThriftName(), err)
+		}
+	}
+	err = iprot.ReadStructEnd()
+	if err != nil {
+		return thrift.NewTProtocolExceptionReadStruct(p.ThriftName(), err)
+	}
+	return err
 }
 
 func (p *GetUserOnlineStatusArgs) ReadField1(iprot thrift.TProtocol) (err thrift.TProtocolException) {
-  _etype97, _size94, err := iprot.ReadListBegin()
-  if err != nil {
-    return thrift.NewTProtocolExceptionReadField(-1, "p.UserIdCollection", "", err)
-  }
-  p.UserIdCollection = thrift.NewTList(_etype97, _size94)
-  for _i98:= 0; _i98 < _size94; _i98++ {
-    _elem99 := NewUserId()
-    err102 := _elem99.Read(iprot)
-    if err102 != nil { return thrift.NewTProtocolExceptionReadStruct("_elem99UserId", err102); }
-    p.UserIdCollection.Push(_elem99)
-  }
-  err = iprot.ReadListEnd()
-  if err != nil { return thrift.NewTProtocolExceptionReadField(-1, "", "list",err); }
-  return err
+	_etype97, _size94, err := iprot.ReadListBegin()
+	if err != nil {
+		return thrift.NewTProtocolExceptionReadField(-1, "p.UserIdCollection", "", err)
+	}
+	p.UserIdCollection = thrift.NewTList(_etype97, _size94)
+	for _i98 := 0; _i98 < _size94; _i98++ {
+		_elem99 := NewUserId()
+		err102 := _elem99.Read(iprot)
+		if err102 != nil {
+			return thrift.NewTProtocolExceptionReadStruct("_elem99UserId", err102)
+		}
+		p.UserIdCollection.Push(_elem99)
+	}
+	err = iprot.ReadListEnd()
+	if err != nil {
+		return thrift.NewTProtocolExceptionReadField(-1, "", "list", err)
+	}
+	return err
 }
 
-func (p *GetUserOnlineStatusArgs) ReadFieldUserIdCollection(iprot thrift.TProtocol) (thrift.TProtocolException) {
-  return p.ReadField1(iprot)
+func (p *GetUserOnlineStatusArgs) ReadFieldUserIdCollection(iprot thrift.TProtocol) thrift.TProtocolException {
+	return p.ReadField1(iprot)
 }
 
 func (p *GetUserOnlineStatusArgs) Write(oprot thrift.TProtocol) (err thrift.TProtocolException) {
-  err = oprot.WriteStructBegin("getUserOnlineStatus_args")
-  if err != nil { return thrift.NewTProtocolExceptionWriteStruct(p.ThriftName(), err); }
-  err = p.WriteField1(oprot)
-  if err != nil { return err }
-  err = oprot.WriteFieldStop()
-  if err != nil { return thrift.NewTProtocolExceptionWriteField(-1, "STOP", p.ThriftName(), err); }
-  err = oprot.WriteStructEnd()
-  if err != nil { return thrift.NewTProtocolExceptionWriteStruct(p.ThriftName(), err); }
-  return err
+	err = oprot.WriteStructBegin("getUserOnlineStatus_args")
+	if err != nil {
+		return thrift.NewTProtocolExceptionWriteStruct(p.ThriftName(), err)
+	}
+	err = p.WriteField1(oprot)
+	if err != nil {
+		return err
+	}
+	err = oprot.WriteFieldStop()
+	if err != nil {
+		return thrift.NewTProtocolExceptionWriteField(-1, "STOP", p.ThriftName(), err)
+	}
+	err = oprot.WriteStructEnd()
+	if err != nil {
+		return thrift.NewTProtocolExceptionWriteStruct(p.ThriftName(), err)
+	}
+	return err
 }
 
 func (p *GetUserOnlineStatusArgs) WriteField1(oprot thrift.TProtocol) (err thrift.TProtocolException) {
-  if p.UserIdCollection != nil {
-    err = oprot.WriteFieldBegin("userIdCollection", thrift.LIST, 1)
-    if err != nil { return thrift.NewTProtocolExceptionWriteField(1, "userIdCollection", p.ThriftName(), err); }
-    err = oprot.WriteListBegin(thrift.STRUCT, p.UserIdCollection.Len())
-    if err != nil { return thrift.NewTProtocolExceptionWriteField(-1, "", "list", err); }
-    for Iter103 := range p.UserIdCollection.Iter() {
-      Iter104 := Iter103.(*UserId)
-      err = Iter104.Write(oprot)
-      if err != nil { return thrift.NewTProtocolExceptionWriteStruct("UserId", err); }
-    }
-    err = oprot.WriteListEnd()
-    if err != nil { return thrift.NewTProtocolExceptionWriteField(-1, "", "list", err); }
-    err = oprot.WriteFieldEnd()
-    if err != nil { return thrift.NewTProtocolExceptionWriteField(1, "userIdCollection", p.ThriftName(), err); }
-  }
-  return err
+	if p.UserIdCollection != nil {
+		err = oprot.WriteFieldBegin("userIdCollection", thrift.LIST, 1)
+		if err != nil {
+			return thrift.NewTProtocolExceptionWriteField(1, "userIdCollection", p.ThriftName(), err)
+		}
+		err = oprot.WriteListBegin(thrift.STRUCT, p.UserIdCollection.Len())
+		if err != nil {
+			return thrift.NewTProtocolExceptionWriteField(-1, "", "list", err)
+		}
+		for Iter103 := range p.UserIdCollection.Iter() {
+			Iter104 := Iter103.(*UserId)
+			err = Iter104.Write(oprot)
+			if err != nil {
+				return thrift.NewTProtocolExceptionWriteStruct("UserId", err)
+			}
+		}
+		err = oprot.WriteListEnd()
+		if err != nil {
+			return thrift.NewTProtocolExceptionWriteField(-1, "", "list", err)
+		}
+		err = oprot.WriteFieldEnd()
+		if err != nil {
+			return thrift.NewTProtocolExceptionWriteField(1, "userIdCollection", p.ThriftName(), err)
+		}
+	}
+	return err
 }
 
-func (p *GetUserOnlineStatusArgs) WriteFieldUserIdCollection(oprot thrift.TProtocol) (thrift.TProtocolException) {
-  return p.WriteField1(oprot)
+func (p *GetUserOnlineStatusArgs) WriteFieldUserIdCollection(oprot thrift.TProtocol) thrift.TProtocolException {
+	return p.WriteField1(oprot)
 }
 
 func (p *GetUserOnlineStatusArgs) TStructName() string {
-  return "GetUserOnlineStatusArgs"
+	return "GetUserOnlineStatusArgs"
 }
 
 func (p *GetUserOnlineStatusArgs) ThriftName() string {
-  return "getUserOnlineStatus_args"
+	return "getUserOnlineStatus_args"
 }
 
 func (p *GetUserOnlineStatusArgs) String() string {
-  if p == nil {
-    return "<nil>"
-  }
-  return fmt.Sprintf("GetUserOnlineStatusArgs(%+v)", *p)
+	if p == nil {
+		return "<nil>"
+	}
+	return fmt.Sprintf("GetUserOnlineStatusArgs(%+v)", *p)
 }
 
 func (p *GetUserOnlineStatusArgs) CompareTo(other interface{}) (int, bool) {
-  if other == nil {
-    return 1, true
-  }
-  data, ok := other.(*GetUserOnlineStatusArgs)
-  if !ok {
-    return 0, false
-  }
-  if cmp, ok := p.UserIdCollection.CompareTo(data.UserIdCollection); !ok || cmp != 0 {
-    return cmp, ok
-  }
-  return 0, true
+	if other == nil {
+		return 1, true
+	}
+	data, ok := other.(*GetUserOnlineStatusArgs)
+	if !ok {
+		return 0, false
+	}
+	if cmp, ok := p.UserIdCollection.CompareTo(data.UserIdCollection); !ok || cmp != 0 {
+		return cmp, ok
+	}
+	return 0, true
 }
 
 func (p *GetUserOnlineStatusArgs) AttributeByFieldId(id int) interface{} {
-  switch id {
-  default: return nil
-  case 1: return p.UserIdCollection
-  }
-  return nil
+	switch id {
+	default:
+		return nil
+	case 1:
+		return p.UserIdCollection
+	}
+	return nil
 }
 
 func (p *GetUserOnlineStatusArgs) TStructFields() thrift.TFieldContainer {
-  return thrift.NewTFieldContainer([]thrift.TField{
-    thrift.NewTField("userIdCollection", thrift.LIST, 1),
-    })
+	return thrift.NewTFieldContainer([]thrift.TField{
+		thrift.NewTField("userIdCollection", thrift.LIST, 1),
+	})
 }
 
 /**
@@ -2058,162 +2373,200 @@ func (p *GetUserOnlineStatusArgs) TStructFields() thrift.TFieldContainer {
  *  - Success
  */
 type GetUserOnlineStatusResult struct {
-  thrift.TStruct
-  Success thrift.TList "success"; // 0
+	thrift.TStruct
+	Success thrift.TList "success" // 0
 }
 
 func NewGetUserOnlineStatusResult() *GetUserOnlineStatusResult {
-  output := &GetUserOnlineStatusResult{
-    TStruct:thrift.NewTStruct("getUserOnlineStatus_result", []thrift.TField{
-    thrift.NewTField("success", thrift.LIST, 0),
-    }),
-  }
-  {
-  }
-  return output
+	output := &GetUserOnlineStatusResult{
+		TStruct: thrift.NewTStruct("getUserOnlineStatus_result", []thrift.TField{
+			thrift.NewTField("success", thrift.LIST, 0),
+		}),
+	}
+	{
+	}
+	return output
 }
 
 func (p *GetUserOnlineStatusResult) Read(iprot thrift.TProtocol) (err thrift.TProtocolException) {
-  _, err = iprot.ReadStructBegin()
-  if err != nil { return thrift.NewTProtocolExceptionReadStruct(p.ThriftName(), err); }
-  for {
-    fieldName, fieldTypeId, fieldId, err := iprot.ReadFieldBegin()
-    if fieldId < 0 {
-      fieldId = int16(p.FieldIdFromFieldName(fieldName))
-    } else if fieldName == "" {
-      fieldName = p.FieldNameFromFieldId(int(fieldId))
-    }
-    if fieldTypeId == thrift.GENERIC {
-      fieldTypeId = p.FieldFromFieldId(int(fieldId)).TypeId()
-    }
-    if err != nil {
-      return thrift.NewTProtocolExceptionReadField(int(fieldId), fieldName, p.ThriftName(), err)
-    }
-    if fieldTypeId == thrift.STOP { break; }
-    if fieldId == 0 || fieldName == "success" {
-      if fieldTypeId == thrift.LIST {
-        err = p.ReadField0(iprot)
-        if err != nil { return thrift.NewTProtocolExceptionReadField(int(fieldId), fieldName, p.ThriftName(), err); }
-      } else if fieldTypeId == thrift.VOID {
-        err = iprot.Skip(fieldTypeId)
-        if err != nil { return thrift.NewTProtocolExceptionReadField(int(fieldId), fieldName, p.ThriftName(), err); }
-      } else {
-        err = p.ReadField0(iprot)
-        if err != nil { return thrift.NewTProtocolExceptionReadField(int(fieldId), fieldName, p.ThriftName(), err); }
-      }
-    } else {
-      err = iprot.Skip(fieldTypeId)
-      if err != nil { return thrift.NewTProtocolExceptionReadField(int(fieldId), fieldName, p.ThriftName(), err); }
-    }
-    err = iprot.ReadFieldEnd()
-    if err != nil { return thrift.NewTProtocolExceptionReadField(int(fieldId), fieldName, p.ThriftName(), err); }
-  }
-  err = iprot.ReadStructEnd()
-  if err != nil { return thrift.NewTProtocolExceptionReadStruct(p.ThriftName(), err); }
-  return err
+	_, err = iprot.ReadStructBegin()
+	if err != nil {
+		return thrift.NewTProtocolExceptionReadStruct(p.ThriftName(), err)
+	}
+	for {
+		fieldName, fieldTypeId, fieldId, err := iprot.ReadFieldBegin()
+		if fieldId < 0 {
+			fieldId = int16(p.FieldIdFromFieldName(fieldName))
+		} else if fieldName == "" {
+			fieldName = p.FieldNameFromFieldId(int(fieldId))
+		}
+		if fieldTypeId == thrift.GENERIC {
+			fieldTypeId = p.FieldFromFieldId(int(fieldId)).TypeId()
+		}
+		if err != nil {
+			return thrift.NewTProtocolExceptionReadField(int(fieldId), fieldName, p.ThriftName(), err)
+		}
+		if fieldTypeId == thrift.STOP {
+			break
+		}
+		if fieldId == 0 || fieldName == "success" {
+			if fieldTypeId == thrift.LIST {
+				err = p.ReadField0(iprot)
+				if err != nil {
+					return thrift.NewTProtocolExceptionReadField(int(fieldId), fieldName, p.ThriftName(), err)
+				}
+			} else if fieldTypeId == thrift.VOID {
+				err = iprot.Skip(fieldTypeId)
+				if err != nil {
+					return thrift.NewTProtocolExceptionReadField(int(fieldId), fieldName, p.ThriftName(), err)
+				}
+			} else {
+				err = p.ReadField0(iprot)
+				if err != nil {
+					return thrift.NewTProtocolExceptionReadField(int(fieldId), fieldName, p.ThriftName(), err)
+				}
+			}
+		} else {
+			err = iprot.Skip(fieldTypeId)
+			if err != nil {
+				return thrift.NewTProtocolExceptionReadField(int(fieldId), fieldName, p.ThriftName(), err)
+			}
+		}
+		err = iprot.ReadFieldEnd()
+		if err != nil {
+			return thrift.NewTProtocolExceptionReadField(int(fieldId), fieldName, p.ThriftName(), err)
+		}
+	}
+	err = iprot.ReadStructEnd()
+	if err != nil {
+		return thrift.NewTProtocolExceptionReadStruct(p.ThriftName(), err)
+	}
+	return err
 }
 
 func (p *GetUserOnlineStatusResult) ReadField0(iprot thrift.TProtocol) (err thrift.TProtocolException) {
-  _etype110, _size107, err := iprot.ReadListBegin()
-  if err != nil {
-    return thrift.NewTProtocolExceptionReadField(-1, "p.Success", "", err)
-  }
-  p.Success = thrift.NewTList(_etype110, _size107)
-  for _i111:= 0; _i111 < _size107; _i111++ {
-    v113, err114 := iprot.ReadBool()
-    if err114 != nil { return thrift.NewTProtocolExceptionReadField(0, "_elem112", "", err114); }
-    _elem112 := v113
-    p.Success.Push(_elem112)
-  }
-  err = iprot.ReadListEnd()
-  if err != nil { return thrift.NewTProtocolExceptionReadField(-1, "", "list",err); }
-  return err
+	_etype110, _size107, err := iprot.ReadListBegin()
+	if err != nil {
+		return thrift.NewTProtocolExceptionReadField(-1, "p.Success", "", err)
+	}
+	p.Success = thrift.NewTList(_etype110, _size107)
+	for _i111 := 0; _i111 < _size107; _i111++ {
+		v113, err114 := iprot.ReadBool()
+		if err114 != nil {
+			return thrift.NewTProtocolExceptionReadField(0, "_elem112", "", err114)
+		}
+		_elem112 := v113
+		p.Success.Push(_elem112)
+	}
+	err = iprot.ReadListEnd()
+	if err != nil {
+		return thrift.NewTProtocolExceptionReadField(-1, "", "list", err)
+	}
+	return err
 }
 
-func (p *GetUserOnlineStatusResult) ReadFieldSuccess(iprot thrift.TProtocol) (thrift.TProtocolException) {
-  return p.ReadField0(iprot)
+func (p *GetUserOnlineStatusResult) ReadFieldSuccess(iprot thrift.TProtocol) thrift.TProtocolException {
+	return p.ReadField0(iprot)
 }
 
 func (p *GetUserOnlineStatusResult) Write(oprot thrift.TProtocol) (err thrift.TProtocolException) {
-  err = oprot.WriteStructBegin("getUserOnlineStatus_result")
-  if err != nil { return thrift.NewTProtocolExceptionWriteStruct(p.ThriftName(), err); }
-  switch {
-  default:
-    if err = p.WriteField0(oprot); err != nil {
-      return err
-    }
-  }
-  err = oprot.WriteFieldStop()
-  if err != nil { return thrift.NewTProtocolExceptionWriteField(-1, "STOP", p.ThriftName(), err); }
-  err = oprot.WriteStructEnd()
-  if err != nil { return thrift.NewTProtocolExceptionWriteStruct(p.ThriftName(), err); }
-  return err
+	err = oprot.WriteStructBegin("getUserOnlineStatus_result")
+	if err != nil {
+		return thrift.NewTProtocolExceptionWriteStruct(p.ThriftName(), err)
+	}
+	switch {
+	default:
+		if err = p.WriteField0(oprot); err != nil {
+			return err
+		}
+	}
+	err = oprot.WriteFieldStop()
+	if err != nil {
+		return thrift.NewTProtocolExceptionWriteField(-1, "STOP", p.ThriftName(), err)
+	}
+	err = oprot.WriteStructEnd()
+	if err != nil {
+		return thrift.NewTProtocolExceptionWriteStruct(p.ThriftName(), err)
+	}
+	return err
 }
 
 func (p *GetUserOnlineStatusResult) WriteField0(oprot thrift.TProtocol) (err thrift.TProtocolException) {
-  if p.Success != nil {
-    err = oprot.WriteFieldBegin("success", thrift.LIST, 0)
-    if err != nil { return thrift.NewTProtocolExceptionWriteField(0, "success", p.ThriftName(), err); }
-    err = oprot.WriteListBegin(thrift.BOOL, p.Success.Len())
-    if err != nil { return thrift.NewTProtocolExceptionWriteField(-1, "", "list", err); }
-    for Iter115 := range p.Success.Iter() {
-      Iter116 := Iter115.(bool)
-      err = oprot.WriteBool(bool(Iter116))
-      if err != nil { return thrift.NewTProtocolExceptionWriteField(0, "Iter116", "", err); }
-    }
-    err = oprot.WriteListEnd()
-    if err != nil { return thrift.NewTProtocolExceptionWriteField(-1, "", "list", err); }
-    err = oprot.WriteFieldEnd()
-    if err != nil { return thrift.NewTProtocolExceptionWriteField(0, "success", p.ThriftName(), err); }
-  }
-  return err
+	if p.Success != nil {
+		err = oprot.WriteFieldBegin("success", thrift.LIST, 0)
+		if err != nil {
+			return thrift.NewTProtocolExceptionWriteField(0, "success", p.ThriftName(), err)
+		}
+		err = oprot.WriteListBegin(thrift.BOOL, p.Success.Len())
+		if err != nil {
+			return thrift.NewTProtocolExceptionWriteField(-1, "", "list", err)
+		}
+		for Iter115 := range p.Success.Iter() {
+			Iter116 := Iter115.(bool)
+			err = oprot.WriteBool(bool(Iter116))
+			if err != nil {
+				return thrift.NewTProtocolExceptionWriteField(0, "Iter116", "", err)
+			}
+		}
+		err = oprot.WriteListEnd()
+		if err != nil {
+			return thrift.NewTProtocolExceptionWriteField(-1, "", "list", err)
+		}
+		err = oprot.WriteFieldEnd()
+		if err != nil {
+			return thrift.NewTProtocolExceptionWriteField(0, "success", p.ThriftName(), err)
+		}
+	}
+	return err
 }
 
-func (p *GetUserOnlineStatusResult) WriteFieldSuccess(oprot thrift.TProtocol) (thrift.TProtocolException) {
-  return p.WriteField0(oprot)
+func (p *GetUserOnlineStatusResult) WriteFieldSuccess(oprot thrift.TProtocol) thrift.TProtocolException {
+	return p.WriteField0(oprot)
 }
 
 func (p *GetUserOnlineStatusResult) TStructName() string {
-  return "GetUserOnlineStatusResult"
+	return "GetUserOnlineStatusResult"
 }
 
 func (p *GetUserOnlineStatusResult) ThriftName() string {
-  return "getUserOnlineStatus_result"
+	return "getUserOnlineStatus_result"
 }
 
 func (p *GetUserOnlineStatusResult) String() string {
-  if p == nil {
-    return "<nil>"
-  }
-  return fmt.Sprintf("GetUserOnlineStatusResult(%+v)", *p)
+	if p == nil {
+		return "<nil>"
+	}
+	return fmt.Sprintf("GetUserOnlineStatusResult(%+v)", *p)
 }
 
 func (p *GetUserOnlineStatusResult) CompareTo(other interface{}) (int, bool) {
-  if other == nil {
-    return 1, true
-  }
-  data, ok := other.(*GetUserOnlineStatusResult)
-  if !ok {
-    return 0, false
-  }
-  if cmp, ok := p.Success.CompareTo(data.Success); !ok || cmp != 0 {
-    return cmp, ok
-  }
-  return 0, true
+	if other == nil {
+		return 1, true
+	}
+	data, ok := other.(*GetUserOnlineStatusResult)
+	if !ok {
+		return 0, false
+	}
+	if cmp, ok := p.Success.CompareTo(data.Success); !ok || cmp != 0 {
+		return cmp, ok
+	}
+	return 0, true
 }
 
 func (p *GetUserOnlineStatusResult) AttributeByFieldId(id int) interface{} {
-  switch id {
-  default: return nil
-  case 0: return p.Success
-  }
-  return nil
+	switch id {
+	default:
+		return nil
+	case 0:
+		return p.Success
+	}
+	return nil
 }
 
 func (p *GetUserOnlineStatusResult) TStructFields() thrift.TFieldContainer {
-  return thrift.NewTFieldContainer([]thrift.TField{
-    thrift.NewTField("success", thrift.LIST, 0),
-    })
+	return thrift.NewTFieldContainer([]thrift.TField{
+		thrift.NewTField("success", thrift.LIST, 0),
+	})
 }
 
 /**
@@ -2223,342 +2576,429 @@ func (p *GetUserOnlineStatusResult) TStructFields() thrift.TFieldContainer {
  *  - Message
  */
 type SendMessageWithOneOfflineMessageArgs struct {
-  thrift.TStruct
-  UserIdCollection UserIdCollection "userIdCollection"; // 1
-  TypeA1 string "type"; // 2
-  Message *Message "message"; // 3
+	thrift.TStruct
+	UserIdCollection UserIdCollection "userIdCollection" // 1
+	TypeA1           string           "type"             // 2
+	Message          *Message         "message"          // 3
 }
 
 func NewSendMessageWithOneOfflineMessageArgs() *SendMessageWithOneOfflineMessageArgs {
-  output := &SendMessageWithOneOfflineMessageArgs{
-    TStruct:thrift.NewTStruct("sendMessageWithOneOfflineMessage_args", []thrift.TField{
-    thrift.NewTField("userIdCollection", thrift.LIST, 1),
-    thrift.NewTField("type", thrift.STRING, 2),
-    thrift.NewTField("message", thrift.STRUCT, 3),
-    }),
-  }
-  {
-  }
-  return output
+	output := &SendMessageWithOneOfflineMessageArgs{
+		TStruct: thrift.NewTStruct("sendMessageWithOneOfflineMessage_args", []thrift.TField{
+			thrift.NewTField("userIdCollection", thrift.LIST, 1),
+			thrift.NewTField("type", thrift.STRING, 2),
+			thrift.NewTField("message", thrift.STRUCT, 3),
+		}),
+	}
+	{
+	}
+	return output
 }
 
 func (p *SendMessageWithOneOfflineMessageArgs) Read(iprot thrift.TProtocol) (err thrift.TProtocolException) {
-  _, err = iprot.ReadStructBegin()
-  if err != nil { return thrift.NewTProtocolExceptionReadStruct(p.ThriftName(), err); }
-  for {
-    fieldName, fieldTypeId, fieldId, err := iprot.ReadFieldBegin()
-    if fieldId < 0 {
-      fieldId = int16(p.FieldIdFromFieldName(fieldName))
-    } else if fieldName == "" {
-      fieldName = p.FieldNameFromFieldId(int(fieldId))
-    }
-    if fieldTypeId == thrift.GENERIC {
-      fieldTypeId = p.FieldFromFieldId(int(fieldId)).TypeId()
-    }
-    if err != nil {
-      return thrift.NewTProtocolExceptionReadField(int(fieldId), fieldName, p.ThriftName(), err)
-    }
-    if fieldTypeId == thrift.STOP { break; }
-    if fieldId == 1 || fieldName == "userIdCollection" {
-      if fieldTypeId == thrift.LIST {
-        err = p.ReadField1(iprot)
-        if err != nil { return thrift.NewTProtocolExceptionReadField(int(fieldId), fieldName, p.ThriftName(), err); }
-      } else if fieldTypeId == thrift.VOID {
-        err = iprot.Skip(fieldTypeId)
-        if err != nil { return thrift.NewTProtocolExceptionReadField(int(fieldId), fieldName, p.ThriftName(), err); }
-      } else {
-        err = p.ReadField1(iprot)
-        if err != nil { return thrift.NewTProtocolExceptionReadField(int(fieldId), fieldName, p.ThriftName(), err); }
-      }
-    } else if fieldId == 2 || fieldName == "type" {
-      if fieldTypeId == thrift.STRING {
-        err = p.ReadField2(iprot)
-        if err != nil { return thrift.NewTProtocolExceptionReadField(int(fieldId), fieldName, p.ThriftName(), err); }
-      } else if fieldTypeId == thrift.VOID {
-        err = iprot.Skip(fieldTypeId)
-        if err != nil { return thrift.NewTProtocolExceptionReadField(int(fieldId), fieldName, p.ThriftName(), err); }
-      } else {
-        err = p.ReadField2(iprot)
-        if err != nil { return thrift.NewTProtocolExceptionReadField(int(fieldId), fieldName, p.ThriftName(), err); }
-      }
-    } else if fieldId == 3 || fieldName == "message" {
-      if fieldTypeId == thrift.STRUCT {
-        err = p.ReadField3(iprot)
-        if err != nil { return thrift.NewTProtocolExceptionReadField(int(fieldId), fieldName, p.ThriftName(), err); }
-      } else if fieldTypeId == thrift.VOID {
-        err = iprot.Skip(fieldTypeId)
-        if err != nil { return thrift.NewTProtocolExceptionReadField(int(fieldId), fieldName, p.ThriftName(), err); }
-      } else {
-        err = p.ReadField3(iprot)
-        if err != nil { return thrift.NewTProtocolExceptionReadField(int(fieldId), fieldName, p.ThriftName(), err); }
-      }
-    } else {
-      err = iprot.Skip(fieldTypeId)
-      if err != nil { return thrift.NewTProtocolExceptionReadField(int(fieldId), fieldName, p.ThriftName(), err); }
-    }
-    err = iprot.ReadFieldEnd()
-    if err != nil { return thrift.NewTProtocolExceptionReadField(int(fieldId), fieldName, p.ThriftName(), err); }
-  }
-  err = iprot.ReadStructEnd()
-  if err != nil { return thrift.NewTProtocolExceptionReadStruct(p.ThriftName(), err); }
-  return err
+	_, err = iprot.ReadStructBegin()
+	if err != nil {
+		return thrift.NewTProtocolExceptionReadStruct(p.ThriftName(), err)
+	}
+	for {
+		fieldName, fieldTypeId, fieldId, err := iprot.ReadFieldBegin()
+		if fieldId < 0 {
+			fieldId = int16(p.FieldIdFromFieldName(fieldName))
+		} else if fieldName == "" {
+			fieldName = p.FieldNameFromFieldId(int(fieldId))
+		}
+		if fieldTypeId == thrift.GENERIC {
+			fieldTypeId = p.FieldFromFieldId(int(fieldId)).TypeId()
+		}
+		if err != nil {
+			return thrift.NewTProtocolExceptionReadField(int(fieldId), fieldName, p.ThriftName(), err)
+		}
+		if fieldTypeId == thrift.STOP {
+			break
+		}
+		if fieldId == 1 || fieldName == "userIdCollection" {
+			if fieldTypeId == thrift.LIST {
+				err = p.ReadField1(iprot)
+				if err != nil {
+					return thrift.NewTProtocolExceptionReadField(int(fieldId), fieldName, p.ThriftName(), err)
+				}
+			} else if fieldTypeId == thrift.VOID {
+				err = iprot.Skip(fieldTypeId)
+				if err != nil {
+					return thrift.NewTProtocolExceptionReadField(int(fieldId), fieldName, p.ThriftName(), err)
+				}
+			} else {
+				err = p.ReadField1(iprot)
+				if err != nil {
+					return thrift.NewTProtocolExceptionReadField(int(fieldId), fieldName, p.ThriftName(), err)
+				}
+			}
+		} else if fieldId == 2 || fieldName == "type" {
+			if fieldTypeId == thrift.STRING {
+				err = p.ReadField2(iprot)
+				if err != nil {
+					return thrift.NewTProtocolExceptionReadField(int(fieldId), fieldName, p.ThriftName(), err)
+				}
+			} else if fieldTypeId == thrift.VOID {
+				err = iprot.Skip(fieldTypeId)
+				if err != nil {
+					return thrift.NewTProtocolExceptionReadField(int(fieldId), fieldName, p.ThriftName(), err)
+				}
+			} else {
+				err = p.ReadField2(iprot)
+				if err != nil {
+					return thrift.NewTProtocolExceptionReadField(int(fieldId), fieldName, p.ThriftName(), err)
+				}
+			}
+		} else if fieldId == 3 || fieldName == "message" {
+			if fieldTypeId == thrift.STRUCT {
+				err = p.ReadField3(iprot)
+				if err != nil {
+					return thrift.NewTProtocolExceptionReadField(int(fieldId), fieldName, p.ThriftName(), err)
+				}
+			} else if fieldTypeId == thrift.VOID {
+				err = iprot.Skip(fieldTypeId)
+				if err != nil {
+					return thrift.NewTProtocolExceptionReadField(int(fieldId), fieldName, p.ThriftName(), err)
+				}
+			} else {
+				err = p.ReadField3(iprot)
+				if err != nil {
+					return thrift.NewTProtocolExceptionReadField(int(fieldId), fieldName, p.ThriftName(), err)
+				}
+			}
+		} else {
+			err = iprot.Skip(fieldTypeId)
+			if err != nil {
+				return thrift.NewTProtocolExceptionReadField(int(fieldId), fieldName, p.ThriftName(), err)
+			}
+		}
+		err = iprot.ReadFieldEnd()
+		if err != nil {
+			return thrift.NewTProtocolExceptionReadField(int(fieldId), fieldName, p.ThriftName(), err)
+		}
+	}
+	err = iprot.ReadStructEnd()
+	if err != nil {
+		return thrift.NewTProtocolExceptionReadStruct(p.ThriftName(), err)
+	}
+	return err
 }
 
 func (p *SendMessageWithOneOfflineMessageArgs) ReadField1(iprot thrift.TProtocol) (err thrift.TProtocolException) {
-  _etype122, _size119, err := iprot.ReadListBegin()
-  if err != nil {
-    return thrift.NewTProtocolExceptionReadField(-1, "p.UserIdCollection", "", err)
-  }
-  p.UserIdCollection = thrift.NewTList(_etype122, _size119)
-  for _i123:= 0; _i123 < _size119; _i123++ {
-    _elem124 := NewUserId()
-    err127 := _elem124.Read(iprot)
-    if err127 != nil { return thrift.NewTProtocolExceptionReadStruct("_elem124UserId", err127); }
-    p.UserIdCollection.Push(_elem124)
-  }
-  err = iprot.ReadListEnd()
-  if err != nil { return thrift.NewTProtocolExceptionReadField(-1, "", "list",err); }
-  return err
+	_etype122, _size119, err := iprot.ReadListBegin()
+	if err != nil {
+		return thrift.NewTProtocolExceptionReadField(-1, "p.UserIdCollection", "", err)
+	}
+	p.UserIdCollection = thrift.NewTList(_etype122, _size119)
+	for _i123 := 0; _i123 < _size119; _i123++ {
+		_elem124 := NewUserId()
+		err127 := _elem124.Read(iprot)
+		if err127 != nil {
+			return thrift.NewTProtocolExceptionReadStruct("_elem124UserId", err127)
+		}
+		p.UserIdCollection.Push(_elem124)
+	}
+	err = iprot.ReadListEnd()
+	if err != nil {
+		return thrift.NewTProtocolExceptionReadField(-1, "", "list", err)
+	}
+	return err
 }
 
-func (p *SendMessageWithOneOfflineMessageArgs) ReadFieldUserIdCollection(iprot thrift.TProtocol) (thrift.TProtocolException) {
-  return p.ReadField1(iprot)
+func (p *SendMessageWithOneOfflineMessageArgs) ReadFieldUserIdCollection(iprot thrift.TProtocol) thrift.TProtocolException {
+	return p.ReadField1(iprot)
 }
 
 func (p *SendMessageWithOneOfflineMessageArgs) ReadField2(iprot thrift.TProtocol) (err thrift.TProtocolException) {
-  v128, err129 := iprot.ReadString()
-  if err129 != nil { return thrift.NewTProtocolExceptionReadField(2, "type", p.ThriftName(), err129); }
-  p.TypeA1 = v128
-  return err
+	v128, err129 := iprot.ReadString()
+	if err129 != nil {
+		return thrift.NewTProtocolExceptionReadField(2, "type", p.ThriftName(), err129)
+	}
+	p.TypeA1 = v128
+	return err
 }
 
-func (p *SendMessageWithOneOfflineMessageArgs) ReadFieldType(iprot thrift.TProtocol) (thrift.TProtocolException) {
-  return p.ReadField2(iprot)
+func (p *SendMessageWithOneOfflineMessageArgs) ReadFieldType(iprot thrift.TProtocol) thrift.TProtocolException {
+	return p.ReadField2(iprot)
 }
 
 func (p *SendMessageWithOneOfflineMessageArgs) ReadField3(iprot thrift.TProtocol) (err thrift.TProtocolException) {
-  p.Message = NewMessage()
-  err132 := p.Message.Read(iprot)
-  if err132 != nil { return thrift.NewTProtocolExceptionReadStruct("p.MessageMessage", err132); }
-  return err
+	p.Message = NewMessage()
+	err132 := p.Message.Read(iprot)
+	if err132 != nil {
+		return thrift.NewTProtocolExceptionReadStruct("p.MessageMessage", err132)
+	}
+	return err
 }
 
-func (p *SendMessageWithOneOfflineMessageArgs) ReadFieldMessage(iprot thrift.TProtocol) (thrift.TProtocolException) {
-  return p.ReadField3(iprot)
+func (p *SendMessageWithOneOfflineMessageArgs) ReadFieldMessage(iprot thrift.TProtocol) thrift.TProtocolException {
+	return p.ReadField3(iprot)
 }
 
 func (p *SendMessageWithOneOfflineMessageArgs) Write(oprot thrift.TProtocol) (err thrift.TProtocolException) {
-  err = oprot.WriteStructBegin("sendMessageWithOneOfflineMessage_args")
-  if err != nil { return thrift.NewTProtocolExceptionWriteStruct(p.ThriftName(), err); }
-  err = p.WriteField1(oprot)
-  if err != nil { return err }
-  err = p.WriteField2(oprot)
-  if err != nil { return err }
-  err = p.WriteField3(oprot)
-  if err != nil { return err }
-  err = oprot.WriteFieldStop()
-  if err != nil { return thrift.NewTProtocolExceptionWriteField(-1, "STOP", p.ThriftName(), err); }
-  err = oprot.WriteStructEnd()
-  if err != nil { return thrift.NewTProtocolExceptionWriteStruct(p.ThriftName(), err); }
-  return err
+	err = oprot.WriteStructBegin("sendMessageWithOneOfflineMessage_args")
+	if err != nil {
+		return thrift.NewTProtocolExceptionWriteStruct(p.ThriftName(), err)
+	}
+	err = p.WriteField1(oprot)
+	if err != nil {
+		return err
+	}
+	err = p.WriteField2(oprot)
+	if err != nil {
+		return err
+	}
+	err = p.WriteField3(oprot)
+	if err != nil {
+		return err
+	}
+	err = oprot.WriteFieldStop()
+	if err != nil {
+		return thrift.NewTProtocolExceptionWriteField(-1, "STOP", p.ThriftName(), err)
+	}
+	err = oprot.WriteStructEnd()
+	if err != nil {
+		return thrift.NewTProtocolExceptionWriteStruct(p.ThriftName(), err)
+	}
+	return err
 }
 
 func (p *SendMessageWithOneOfflineMessageArgs) WriteField1(oprot thrift.TProtocol) (err thrift.TProtocolException) {
-  if p.UserIdCollection != nil {
-    err = oprot.WriteFieldBegin("userIdCollection", thrift.LIST, 1)
-    if err != nil { return thrift.NewTProtocolExceptionWriteField(1, "userIdCollection", p.ThriftName(), err); }
-    err = oprot.WriteListBegin(thrift.STRUCT, p.UserIdCollection.Len())
-    if err != nil { return thrift.NewTProtocolExceptionWriteField(-1, "", "list", err); }
-    for Iter133 := range p.UserIdCollection.Iter() {
-      Iter134 := Iter133.(*UserId)
-      err = Iter134.Write(oprot)
-      if err != nil { return thrift.NewTProtocolExceptionWriteStruct("UserId", err); }
-    }
-    err = oprot.WriteListEnd()
-    if err != nil { return thrift.NewTProtocolExceptionWriteField(-1, "", "list", err); }
-    err = oprot.WriteFieldEnd()
-    if err != nil { return thrift.NewTProtocolExceptionWriteField(1, "userIdCollection", p.ThriftName(), err); }
-  }
-  return err
+	if p.UserIdCollection != nil {
+		err = oprot.WriteFieldBegin("userIdCollection", thrift.LIST, 1)
+		if err != nil {
+			return thrift.NewTProtocolExceptionWriteField(1, "userIdCollection", p.ThriftName(), err)
+		}
+		err = oprot.WriteListBegin(thrift.STRUCT, p.UserIdCollection.Len())
+		if err != nil {
+			return thrift.NewTProtocolExceptionWriteField(-1, "", "list", err)
+		}
+		for Iter133 := range p.UserIdCollection.Iter() {
+			Iter134 := Iter133.(*UserId)
+			err = Iter134.Write(oprot)
+			if err != nil {
+				return thrift.NewTProtocolExceptionWriteStruct("UserId", err)
+			}
+		}
+		err = oprot.WriteListEnd()
+		if err != nil {
+			return thrift.NewTProtocolExceptionWriteField(-1, "", "list", err)
+		}
+		err = oprot.WriteFieldEnd()
+		if err != nil {
+			return thrift.NewTProtocolExceptionWriteField(1, "userIdCollection", p.ThriftName(), err)
+		}
+	}
+	return err
 }
 
-func (p *SendMessageWithOneOfflineMessageArgs) WriteFieldUserIdCollection(oprot thrift.TProtocol) (thrift.TProtocolException) {
-  return p.WriteField1(oprot)
+func (p *SendMessageWithOneOfflineMessageArgs) WriteFieldUserIdCollection(oprot thrift.TProtocol) thrift.TProtocolException {
+	return p.WriteField1(oprot)
 }
 
 func (p *SendMessageWithOneOfflineMessageArgs) WriteField2(oprot thrift.TProtocol) (err thrift.TProtocolException) {
-  err = oprot.WriteFieldBegin("type", thrift.STRING, 2)
-  if err != nil { return thrift.NewTProtocolExceptionWriteField(2, "type", p.ThriftName(), err); }
-  err = oprot.WriteString(string(p.TypeA1))
-  if err != nil { return thrift.NewTProtocolExceptionWriteField(2, "type", p.ThriftName(), err); }
-  err = oprot.WriteFieldEnd()
-  if err != nil { return thrift.NewTProtocolExceptionWriteField(2, "type", p.ThriftName(), err); }
-  return err
+	err = oprot.WriteFieldBegin("type", thrift.STRING, 2)
+	if err != nil {
+		return thrift.NewTProtocolExceptionWriteField(2, "type", p.ThriftName(), err)
+	}
+	err = oprot.WriteString(string(p.TypeA1))
+	if err != nil {
+		return thrift.NewTProtocolExceptionWriteField(2, "type", p.ThriftName(), err)
+	}
+	err = oprot.WriteFieldEnd()
+	if err != nil {
+		return thrift.NewTProtocolExceptionWriteField(2, "type", p.ThriftName(), err)
+	}
+	return err
 }
 
-func (p *SendMessageWithOneOfflineMessageArgs) WriteFieldType(oprot thrift.TProtocol) (thrift.TProtocolException) {
-  return p.WriteField2(oprot)
+func (p *SendMessageWithOneOfflineMessageArgs) WriteFieldType(oprot thrift.TProtocol) thrift.TProtocolException {
+	return p.WriteField2(oprot)
 }
 
 func (p *SendMessageWithOneOfflineMessageArgs) WriteField3(oprot thrift.TProtocol) (err thrift.TProtocolException) {
-  if p.Message != nil {
-    err = oprot.WriteFieldBegin("message", thrift.STRUCT, 3)
-    if err != nil { return thrift.NewTProtocolExceptionWriteField(3, "message", p.ThriftName(), err); }
-    err = p.Message.Write(oprot)
-    if err != nil { return thrift.NewTProtocolExceptionWriteStruct("Message", err); }
-    err = oprot.WriteFieldEnd()
-    if err != nil { return thrift.NewTProtocolExceptionWriteField(3, "message", p.ThriftName(), err); }
-  }
-  return err
+	if p.Message != nil {
+		err = oprot.WriteFieldBegin("message", thrift.STRUCT, 3)
+		if err != nil {
+			return thrift.NewTProtocolExceptionWriteField(3, "message", p.ThriftName(), err)
+		}
+		err = p.Message.Write(oprot)
+		if err != nil {
+			return thrift.NewTProtocolExceptionWriteStruct("Message", err)
+		}
+		err = oprot.WriteFieldEnd()
+		if err != nil {
+			return thrift.NewTProtocolExceptionWriteField(3, "message", p.ThriftName(), err)
+		}
+	}
+	return err
 }
 
-func (p *SendMessageWithOneOfflineMessageArgs) WriteFieldMessage(oprot thrift.TProtocol) (thrift.TProtocolException) {
-  return p.WriteField3(oprot)
+func (p *SendMessageWithOneOfflineMessageArgs) WriteFieldMessage(oprot thrift.TProtocol) thrift.TProtocolException {
+	return p.WriteField3(oprot)
 }
 
 func (p *SendMessageWithOneOfflineMessageArgs) TStructName() string {
-  return "SendMessageWithOneOfflineMessageArgs"
+	return "SendMessageWithOneOfflineMessageArgs"
 }
 
 func (p *SendMessageWithOneOfflineMessageArgs) ThriftName() string {
-  return "sendMessageWithOneOfflineMessage_args"
+	return "sendMessageWithOneOfflineMessage_args"
 }
 
 func (p *SendMessageWithOneOfflineMessageArgs) String() string {
-  if p == nil {
-    return "<nil>"
-  }
-  return fmt.Sprintf("SendMessageWithOneOfflineMessageArgs(%+v)", *p)
+	if p == nil {
+		return "<nil>"
+	}
+	return fmt.Sprintf("SendMessageWithOneOfflineMessageArgs(%+v)", *p)
 }
 
 func (p *SendMessageWithOneOfflineMessageArgs) CompareTo(other interface{}) (int, bool) {
-  if other == nil {
-    return 1, true
-  }
-  data, ok := other.(*SendMessageWithOneOfflineMessageArgs)
-  if !ok {
-    return 0, false
-  }
-  if cmp, ok := p.UserIdCollection.CompareTo(data.UserIdCollection); !ok || cmp != 0 {
-    return cmp, ok
-  }
-  if p.TypeA1 != data.TypeA1 {
-    if p.TypeA1 < data.TypeA1 {
-      return -1, true
-    }
-    return 1, true
-  }
-  if cmp, ok := p.Message.CompareTo(data.Message); !ok || cmp != 0 {
-    return cmp, ok
-  }
-  return 0, true
+	if other == nil {
+		return 1, true
+	}
+	data, ok := other.(*SendMessageWithOneOfflineMessageArgs)
+	if !ok {
+		return 0, false
+	}
+	if cmp, ok := p.UserIdCollection.CompareTo(data.UserIdCollection); !ok || cmp != 0 {
+		return cmp, ok
+	}
+	if p.TypeA1 != data.TypeA1 {
+		if p.TypeA1 < data.TypeA1 {
+			return -1, true
+		}
+		return 1, true
+	}
+	if cmp, ok := p.Message.CompareTo(data.Message); !ok || cmp != 0 {
+		return cmp, ok
+	}
+	return 0, true
 }
 
 func (p *SendMessageWithOneOfflineMessageArgs) AttributeByFieldId(id int) interface{} {
-  switch id {
-  default: return nil
-  case 1: return p.UserIdCollection
-  case 2: return p.TypeA1
-  case 3: return p.Message
-  }
-  return nil
+	switch id {
+	default:
+		return nil
+	case 1:
+		return p.UserIdCollection
+	case 2:
+		return p.TypeA1
+	case 3:
+		return p.Message
+	}
+	return nil
 }
 
 func (p *SendMessageWithOneOfflineMessageArgs) TStructFields() thrift.TFieldContainer {
-  return thrift.NewTFieldContainer([]thrift.TField{
-    thrift.NewTField("userIdCollection", thrift.LIST, 1),
-    thrift.NewTField("type", thrift.STRING, 2),
-    thrift.NewTField("message", thrift.STRUCT, 3),
-    })
+	return thrift.NewTFieldContainer([]thrift.TField{
+		thrift.NewTField("userIdCollection", thrift.LIST, 1),
+		thrift.NewTField("type", thrift.STRING, 2),
+		thrift.NewTField("message", thrift.STRUCT, 3),
+	})
 }
 
 type SendMessageWithOneOfflineMessageResult struct {
-  thrift.TStruct
+	thrift.TStruct
 }
 
 func NewSendMessageWithOneOfflineMessageResult() *SendMessageWithOneOfflineMessageResult {
-  output := &SendMessageWithOneOfflineMessageResult{
-    TStruct:thrift.NewTStruct("sendMessageWithOneOfflineMessage_result", []thrift.TField{
-    }),
-  }
-  {
-  }
-  return output
+	output := &SendMessageWithOneOfflineMessageResult{
+		TStruct: thrift.NewTStruct("sendMessageWithOneOfflineMessage_result", []thrift.TField{}),
+	}
+	{
+	}
+	return output
 }
 
 func (p *SendMessageWithOneOfflineMessageResult) Read(iprot thrift.TProtocol) (err thrift.TProtocolException) {
-  _, err = iprot.ReadStructBegin()
-  if err != nil { return thrift.NewTProtocolExceptionReadStruct(p.ThriftName(), err); }
-  for {
-    fieldName, fieldTypeId, fieldId, err := iprot.ReadFieldBegin()
-    if fieldId < 0 {
-      fieldId = int16(p.FieldIdFromFieldName(fieldName))
-    } else if fieldName == "" {
-      fieldName = p.FieldNameFromFieldId(int(fieldId))
-    }
-    if fieldTypeId == thrift.GENERIC {
-      fieldTypeId = p.FieldFromFieldId(int(fieldId)).TypeId()
-    }
-    if err != nil {
-      return thrift.NewTProtocolExceptionReadField(int(fieldId), fieldName, p.ThriftName(), err)
-    }
-    if fieldTypeId == thrift.STOP { break; }
-    err = iprot.Skip(fieldTypeId)
-    if err != nil { return thrift.NewTProtocolExceptionReadField(int(fieldId), fieldName, p.ThriftName(), err); }
-    err = iprot.ReadFieldEnd()
-    if err != nil { return thrift.NewTProtocolExceptionReadField(int(fieldId), fieldName, p.ThriftName(), err); }
-  }
-  err = iprot.ReadStructEnd()
-  if err != nil { return thrift.NewTProtocolExceptionReadStruct(p.ThriftName(), err); }
-  return err
+	_, err = iprot.ReadStructBegin()
+	if err != nil {
+		return thrift.NewTProtocolExceptionReadStruct(p.ThriftName(), err)
+	}
+	for {
+		fieldName, fieldTypeId, fieldId, err := iprot.ReadFieldBegin()
+		if fieldId < 0 {
+			fieldId = int16(p.FieldIdFromFieldName(fieldName))
+		} else if fieldName == "" {
+			fieldName = p.FieldNameFromFieldId(int(fieldId))
+		}
+		if fieldTypeId == thrift.GENERIC {
+			fieldTypeId = p.FieldFromFieldId(int(fieldId)).TypeId()
+		}
+		if err != nil {
+			return thrift.NewTProtocolExceptionReadField(int(fieldId), fieldName, p.ThriftName(), err)
+		}
+		if fieldTypeId == thrift.STOP {
+			break
+		}
+		err = iprot.Skip(fieldTypeId)
+		if err != nil {
+			return thrift.NewTProtocolExceptionReadField(int(fieldId), fieldName, p.ThriftName(), err)
+		}
+		err = iprot.ReadFieldEnd()
+		if err != nil {
+			return thrift.NewTProtocolExceptionReadField(int(fieldId), fieldName, p.ThriftName(), err)
+		}
+	}
+	err = iprot.ReadStructEnd()
+	if err != nil {
+		return thrift.NewTProtocolExceptionReadStruct(p.ThriftName(), err)
+	}
+	return err
 }
 
 func (p *SendMessageWithOneOfflineMessageResult) Write(oprot thrift.TProtocol) (err thrift.TProtocolException) {
-  err = oprot.WriteStructBegin("sendMessageWithOneOfflineMessage_result")
-  if err != nil { return thrift.NewTProtocolExceptionWriteStruct(p.ThriftName(), err); }
-  err = oprot.WriteFieldStop()
-  if err != nil { return thrift.NewTProtocolExceptionWriteField(-1, "STOP", p.ThriftName(), err); }
-  err = oprot.WriteStructEnd()
-  if err != nil { return thrift.NewTProtocolExceptionWriteStruct(p.ThriftName(), err); }
-  return err
+	err = oprot.WriteStructBegin("sendMessageWithOneOfflineMessage_result")
+	if err != nil {
+		return thrift.NewTProtocolExceptionWriteStruct(p.ThriftName(), err)
+	}
+	err = oprot.WriteFieldStop()
+	if err != nil {
+		return thrift.NewTProtocolExceptionWriteField(-1, "STOP", p.ThriftName(), err)
+	}
+	err = oprot.WriteStructEnd()
+	if err != nil {
+		return thrift.NewTProtocolExceptionWriteStruct(p.ThriftName(), err)
+	}
+	return err
 }
 
 func (p *SendMessageWithOneOfflineMessageResult) TStructName() string {
-  return "SendMessageWithOneOfflineMessageResult"
+	return "SendMessageWithOneOfflineMessageResult"
 }
 
 func (p *SendMessageWithOneOfflineMessageResult) ThriftName() string {
-  return "sendMessageWithOneOfflineMessage_result"
+	return "sendMessageWithOneOfflineMessage_result"
 }
 
 func (p *SendMessageWithOneOfflineMessageResult) String() string {
-  if p == nil {
-    return "<nil>"
-  }
-  return fmt.Sprintf("SendMessageWithOneOfflineMessageResult(%+v)", *p)
+	if p == nil {
+		return "<nil>"
+	}
+	return fmt.Sprintf("SendMessageWithOneOfflineMessageResult(%+v)", *p)
 }
 
 func (p *SendMessageWithOneOfflineMessageResult) CompareTo(other interface{}) (int, bool) {
-  if other == nil {
-    return 1, true
-  }
-  _, ok := other.(*SendMessageWithOneOfflineMessageResult)
-  if !ok {
-    return 0, false
-  }
-  return 0, true
+	if other == nil {
+		return 1, true
+	}
+	_, ok := other.(*SendMessageWithOneOfflineMessageResult)
+	if !ok {
+		return 0, false
+	}
+	return 0, true
 }
 
 func (p *SendMessageWithOneOfflineMessageResult) AttributeByFieldId(id int) interface{} {
-  switch id {
-  default: return nil
-  }
-  return nil
+	switch id {
+	default:
+		return nil
+	}
+	return nil
 }
 
 func (p *SendMessageWithOneOfflineMessageResult) TStructFields() thrift.TFieldContainer {
-  return thrift.NewTFieldContainer([]thrift.TField{
-    })
+	return thrift.NewTFieldContainer([]thrift.TField{})
 }
-
-
